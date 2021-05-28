@@ -11,7 +11,7 @@ export default {
       max: 10
     },
     migrations: {
-      directory: "migrations",
+      directory: "src/database/migrations",
       extension: "mjs",
       tableName: "knex_migrations"
     },
@@ -31,7 +31,7 @@ export default {
       max: 10
     },
     migrations: {
-      directory: "migrations",
+      directory: "src/database/migrations",
       extension: "mjs",
       tableName: "knex_migrations"
     }

@@ -24,7 +24,10 @@ ALTER TABLE ONLY hein_users
     ADD CONSTRAINT hein_users_pk PRIMARY KEY (id);
 
 ALTER TABLE ONLY hein_users
-    ADD CONSTRAINT hein_users_un UNIQUE (id, uuid, username);
+    ADD CONSTRAINT hein_users_un_uuid UNIQUE (uuid);
+
+ALTER TABLE ONLY hein_users
+    ADD CONSTRAINT hein_users_un_username UNIQUE (username);
 
 `);
 }

@@ -1,4 +1,4 @@
-import { PG_SQL_DB, PG_SQL_HOST, PG_SQL_PASS, PG_SQL_PORT, PG_SQL_USER } from '$lib/env';
+import { PG_URL } from '$utils/constants/env';
 import knex, { Knex } from 'knex';
 
 class Database {
@@ -12,12 +12,13 @@ class Database {
 
     init() {
         if (this.instance) return;
-
+        
         this.instance = knex(this.config);
     }
 }
 
+
 export const db = new Database({
     client: 'pg',
-    connection: `postgres://${PG_SQL_USER}:${PG_SQL_PASS}@${PG_SQL_HOST}:${PG_SQL_PORT}/${PG_SQL_DB}`,
+    connection: PG_URL,
 });

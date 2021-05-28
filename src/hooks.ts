@@ -1,4 +1,4 @@
-import { db } from '$lib/database';
+import { db } from '$database';
 import type { Handle, ServerResponse } from '@sveltejs/kit/types/hooks';
 
 export const handle: Handle = ({ request, render }): ServerResponse | Promise<ServerResponse> => {
