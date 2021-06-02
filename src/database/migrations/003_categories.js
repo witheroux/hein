@@ -4,7 +4,7 @@ CREATE TABLE hein_categories (
     id integer NOT NULL,
     name character varying(50) NOT NULL,
     slug character varying(50) NOT NULL,
-    created_by integer DEFAULT 0 NOT NULL
+    created_by_id integer DEFAULT 0 NOT NULL
 );
 
 CREATE SEQUENCE hein_categories_id_seq
@@ -26,7 +26,7 @@ ALTER TABLE ONLY hein_categories
     ADD CONSTRAINT hein_categories_un UNIQUE (slug);
 
 ALTER TABLE ONLY hein_categories
-    ADD CONSTRAINT hein_categories_fk FOREIGN KEY (created_by) REFERENCES hein_users(id) ON UPDATE SET DEFAULT ON DELETE SET DEFAULT;
+    ADD CONSTRAINT hein_categories_fk FOREIGN KEY (created_by_id) REFERENCES hein_users(id) ON UPDATE SET DEFAULT ON DELETE SET DEFAULT;
 
 
 CREATE TRIGGER trg_slug_insert BEFORE INSERT ON hein_categories FOR EACH ROW WHEN (((new.name IS NOT NULL) AND (new.slug IS NULL))) EXECUTE FUNCTION set_slug_from_name();

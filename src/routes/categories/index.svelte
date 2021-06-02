@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
   import { getContext } from 'svelte';
   import { TITLE_SEPARATOR, TITLE_SUFFIX } from '$utils/constants/labels';
   import { USER_CONTEXT_KEY } from '$utils/constants/contexts';
@@ -7,14 +7,18 @@
 </script>
 
 <svelte:head>
-  <title>Accueil {TITLE_SEPARATOR} {TITLE_SUFFIX}</title>
+  <title>Catégories {TITLE_SEPARATOR} {TITLE_SUFFIX}</title>
 </svelte:head>
 
 {#if logged}
-  <div>Jouer</div>
-{:else}
-  <div>Accueil</div>
+  <form method="POST" action="/api/categories">
+    <label>
+      Nom
+      <input name="name" />
+    </label>
+
+    <button type="submit">Ajouter la catégorie</button>
+  </form>
 {/if}
 
-<style lang="postcss">
-</style>
+<h1>Liste des cartes</h1>

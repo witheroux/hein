@@ -7,7 +7,11 @@
     "preview": "svelte-kit preview",
     "lint": "prettier --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
     "format": "prettier --write --plugin-search-dir=. .",
-    "migrate": "knex --knexfile ./knexfile.mjs migrate:latest --esm"
+    "knex": "knex --knexfile ./knexfile.mjs --esm",
+    "migrate": "knex --knexfile ./knexfile.mjs migrate:latest --esm",
+    "migrate:up": "knex --knexfile ./knexfile.mjs migrate:up --esm",
+    "migrate:down": "knex --knexfile ./knexfile.mjs migrate:down --esm --debug",
+    "migrate:unlock": "knex --knexfile ./knexfile.mjs migrate:unlock --esm"
   },
   "devDependencies": {
     "@sveltejs/kit": "next",
@@ -35,8 +39,12 @@
     "@fontsource/lato": "^4.3.0",
     "@fontsource/sigmar-one": "^4.3.0",
     "bcrypt": "^5.0.1",
+    "cookie": "^0.4.1",
     "dotenv": "^10.0.0",
+    "joi": "^17.4.0",
     "knex": "^0.95.6",
-    "pg": "^8.6.0"
+    "objection": "^2.2.15",
+    "pg": "^8.6.0",
+    "uuid": "^8.3.2"
   }
 }

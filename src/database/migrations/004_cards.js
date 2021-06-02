@@ -4,8 +4,8 @@ CREATE TABLE hein_cards (
     id integer NOT NULL,
     name character varying(128) NOT NULL,
     slug character varying(128) NOT NULL,
-    category integer NOT NULL,
-    created_by integer DEFAULT 0 NOT NULL
+    category_id integer NOT NULL,
+    created_by_id integer DEFAULT 0 NOT NULL
 );
 
 CREATE SEQUENCE hein_cards_id_seq
@@ -24,13 +24,13 @@ ALTER TABLE ONLY hein_cards
     ADD CONSTRAINT hein_cards_pk PRIMARY KEY (id);
 
 ALTER TABLE ONLY hein_cards
-    ADD CONSTRAINT hein_cards_un UNIQUE (slug, category);
+    ADD CONSTRAINT hein_cards_un UNIQUE (slug, category_id);
 
 ALTER TABLE ONLY hein_cards
-    ADD CONSTRAINT hein_cards_fk_1 FOREIGN KEY (created_by) REFERENCES hein_users(id) ON UPDATE SET DEFAULT ON DELETE SET DEFAULT;
+    ADD CONSTRAINT hein_cards_fk_1 FOREIGN KEY (created_by_id) REFERENCES hein_users(id) ON UPDATE SET DEFAULT ON DELETE SET DEFAULT;
 
 ALTER TABLE ONLY hein_cards
-    ADD CONSTRAINT hein_cards_fk FOREIGN KEY (category) REFERENCES hein_categories(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT hein_cards_fk FOREIGN KEY (category_id) REFERENCES hein_categories(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 CREATE TRIGGER trg_slug_insert BEFORE INSERT ON hein_cards FOR EACH ROW WHEN (((new.name IS NOT NULL) AND (new.slug IS NULL))) EXECUTE FUNCTION set_slug_from_name();
 `)

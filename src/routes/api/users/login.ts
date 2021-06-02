@@ -1,53 +1,60 @@
 import type { ServerRequest } from '@sveltejs/kit/types/endpoint';
-
-import { db } from '$database';
 import type { User } from '$utils/types/users';
+
+import { Buffer } from 'buffer';
+import Joi from 'joi';
+import { db } from '$database';
 import { compare } from '$utils/helpers/password';
+import { formDataToObject, getHttpResponse, validationDetailsToError } from '$utils/helpers/request';
+import { StatusCode } from '$utils/constants/httpResponse';
+
+export const schema = Joi.object({
+    username: Joi.string()
+        .required(),
+    password: Joi.string()
+        .required(),
+});
 
 export async function post({ body }: ServerRequest) {
-    const username = body.get('username');
-    const password = body.get('password');
+    const data = formDataToObject(body);
+    const { username, password } = data;
+    const { error } = schema.validate(data, { abortEarly: false });
 
-    let user: Partial<User>[] = [];
+    if (error) {
+        return {
+            status: 400,
+            body: {
+                errors: validationDetailsToError(error.details),
+            }
+        }
+    }
+
+    let user: Partial<User> | undefined;
     try {
         user = await db.instance.select()
             .from<User>('hein_users')
-            .where('username', '=', username);
+            .where('username', '=', username)
+            .first();
     } catch (e) {
         // TODO (William): Log error somewhere
         console.error(e);
     }
 
-    if (user.length === 0) {
-        return {
-            status: 404,
-            body: {
-                error: {
-                    message: 'Not found',
-                    code: 404,
-                }
-            }
-        }
+    if (!user) {
+        return getHttpResponse(StatusCode.NOT_FOUND);
     }
 
-    const isCorrectPassword = await compare(password, user[0].password);
-
-    if (!isCorrectPassword) {
-        return {
-            status: 401,
-            body: {
-                error: {
-                    message: 'Unauthorized',
-                    code: 401,
-                }
-            }
-        }
+    if (!await compare(password, user.password)) {
+        return getHttpResponse(StatusCode.UNAUTHORIZED);
     }
+
+    delete user.password;
 
     return {
-        status: 200,
-        body: {
-            ...user[0]
+        status: 303,
+        headers: {
+            location: '/',
+            'set-cookie': `user=${Buffer.from(JSON.stringify({...user})).toString()}; Path=/; HttpOnly; SameSite=strict`,
         }
     }
 }
