@@ -5,6 +5,8 @@
     const { user } = session;
     const { name, uuid } = user;
 
+    console.log(user);
+
     return {
       props: {
         logged: !!uuid,

@@ -8,14 +8,17 @@ DECLARE
     slug_seq varchar;
 BEGIN
     NEW.slug := slugify(NEW.name);
-    slug_seq := 'slug_' || lower(TG_TABLE_NAME) || '_' || NEW.slug || '_seq';
+    slug_seq := lower(TG_TABLE_NAME) || '_slug_' || NEW.slug || '_seq';
 
     EXECUTE format('SELECT * FROM %I WHERE $1 = slug', TG_TABLE_NAME) 
         INTO c
         USING NEW.slug;
     
     IF (c IS NOT NULL) THEN 
-        EXECUTE format('CREATE SEQUENCE IF NOT EXISTS %I OWNED BY %I', slug_seq, TG_TABLE_NAME);
+        EXECUTE format('
+            CREATE SEQUENCE IF NOT EXISTS %I;
+            ALTER SEQUENCE %I OWNED BY %I.slug;
+        ', slug_seq, slug_seq, TG_TABLE_NAME);
         NEW.slug := NEW.slug || '-' || nextval(slug_seq);
     END IF;
 

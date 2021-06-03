@@ -69,6 +69,8 @@ export async function post(req: ServerRequest): Promise<EndpointOutput> {
     // FIXME: Redirect doesn't get this.
     // flash(req, { message: 'Compte créé avec succès', type: 'success' });
 
+    delete user.password;
+
     return {
         status: 303,
         headers: {

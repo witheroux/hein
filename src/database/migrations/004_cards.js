@@ -43,4 +43,3 @@ DROP TABLE IF EXISTS hein_cards CASCADE;
 DROP SEQUENCE IF EXISTS hein_cards_id_seq CASCADE;
 `)
 }
-

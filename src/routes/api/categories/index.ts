@@ -4,8 +4,7 @@ import Joi from "joi";
 
 import { StatusCode } from "$utils/constants/httpResponse";
 import { formDataToObject, getHttpResponse, validationDetailsToError } from "$utils/helpers/request";
-import { Category, db } from "$database";
-import type { QueryBuilder } from "objection";
+import { Category } from "$database";
 
 const getSchema = Joi.object({
     slug: Joi.string()
@@ -87,7 +86,7 @@ export async function post(req): Promise<EndpointOutput> {
         category = await Category.query()
             .insert({
                 name,
-                "created_by": user.id,
+                "created_by_id": user.id,
             })
             .returning('slug');
     } catch (e) {
@@ -103,7 +102,7 @@ export async function post(req): Promise<EndpointOutput> {
     return {
         status: 303,
         headers: {
-            location: `/categories/${category[0].slug}`
+            location: `/categories/${category.slug}`
         }
     }
 }

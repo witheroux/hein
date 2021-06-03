@@ -12,8 +12,8 @@ export class Card extends Model implements ICard {
     id: number;
     name: string;
     slug: string;
-    category: ICategory;
-    created_by: IUser;
+    category_id: ICategory;
+    created_by_id: IUser;
     static get tableName(): string {
         return 'hein_categories';
     }

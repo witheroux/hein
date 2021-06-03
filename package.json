@@ -8,10 +8,8 @@
     "lint": "prettier --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
     "format": "prettier --write --plugin-search-dir=. .",
     "knex": "knex --knexfile ./knexfile.mjs",
-    "migrate": "knex --knexfile ./knexfile.mjs migrate:latest",
-    "migrate:up": "knex --knexfile ./knexfile.mjs migrate:up",
-    "migrate:down": "knex --knexfile ./knexfile.mjs migrate:down",
-    "migrate:unlock": "knex --knexfile ./knexfile.mjs migrate:unlock"
+    "migrate:latest": "knex --knexfile ./knexfile.mjs migrate:latest",
+    "migrate:reset": "knex --knexfile ./knexfile.mjs migrate:rollback && knex --knexfile ./knexfile.mjs migrate:latest"
   },
   "devDependencies": {
     "@sveltejs/kit": "next",

@@ -4,5 +4,5 @@ export interface ICategory {
     id: number;
     name: string;
     slug: string;
-    created_by: IUser;
+    created_by_id: IUser;
 }
