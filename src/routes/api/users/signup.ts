@@ -1,14 +1,12 @@
-import type { ServerRequest } from '@sveltejs/kit/types/endpoint';
-import type { User } from '$utils/types/users';
+import type { EndpointOutput, ServerRequest } from '@sveltejs/kit/types/endpoint';
 
 import Joi from 'joi';
 
-import { db } from '$database';
 
 import { encrypt } from '$utils/helpers/password';
 import { formDataToObject, getHttpResponse, validationDetailsToError } from '$utils/helpers/request';
 import { StatusCode } from '$utils/constants/httpResponse';
-import { flash } from '$utils/helpers/request';
+import { User } from '$database';
 
 export const schema = Joi.object({
     username: Joi.string()
@@ -29,7 +27,7 @@ export const schema = Joi.object({
 })
     .with('password', 'confirmPassword');
 
-export async function post(req: ServerRequest) {
+export async function post(req: ServerRequest): Promise<EndpointOutput> {
     const { body } = req;
     const data = formDataToObject(body);
     const { username, name, password } = data;
@@ -44,18 +42,19 @@ export async function post(req: ServerRequest) {
         };
     }
 
-    let user: Partial<User>[] = [];
+    let user: User | undefined;
     try {
-        user = await db.instance('hein_users')
+        user = await User.query()
             .insert({
                 name,
                 username,
                 password: await encrypt(password),
-            }, [
+            })
+            .returning([
                 'id',
                 'uuid',
-                'name',
                 'username',
+                'name'
             ]);
     } catch (e) {
         // TODO (William): Log error somewhere
@@ -63,7 +62,7 @@ export async function post(req: ServerRequest) {
     }
 
     // TODO (William): Better output as to why the request was bad
-    if (user.length === 0) {
+    if (!user) {
         return getHttpResponse(StatusCode.BAD_REQUEST);
     }
 
@@ -74,7 +73,7 @@ export async function post(req: ServerRequest) {
         status: 303,
         headers: {
             location: '/',
-            'set-cookie': `user=${Buffer.from(JSON.stringify({...user[0]})).toString()}; Path=/; HttpOnly; SameSite=strict`,
+            'set-cookie': `user=${Buffer.from(JSON.stringify({...user})).toString()}; Path=/; HttpOnly; SameSite=strict`,
         },
     }
 }

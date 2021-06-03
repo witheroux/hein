@@ -1,24 +1,19 @@
 import type Joi from "joi";
 import type { URLSearchParams } from "url";
-import type { EndpointOutput, ServerRequest } from "@sveltejs/kit/types/endpoint";
+import type { EndpointOutput, JSONValue, ServerRequest } from "@sveltejs/kit/types/endpoint";
 import type { ReadOnlyFormData } from "@sveltejs/kit/types/helper";
 import type { Flash } from "$utils/types/request";
 
 import { MESSAGES, StatusCode } from "$utils/constants/httpResponse";
 
-interface ValidationErrorObject {
-    reason: string;
-    value: string;
-}
-
-export function flash(req: ServerRequest, flashObject: Flash) {
+export function flash(req: ServerRequest, flashObject: Flash): void {
     req.locals.flash = req.locals.flash || [];
     req.locals.flash.push(flashObject);
 }
 
-export function formDataToObject<T extends Record<string, any> = Record<string, any>>(query: URLSearchParams);
-export function formDataToObject<T extends Record<string, any> = Record<string, any>>(body: ReadOnlyFormData);
-export function formDataToObject<T extends Record<string, any> = Record<string, any>>(queryOrBody: URLSearchParams | ReadOnlyFormData): T {
+export function formDataToObject<T extends Record<string, string> = Record<string, any>>(query: URLSearchParams): T;
+export function formDataToObject<T extends Record<string, string> = Record<string, any>>(body: ReadOnlyFormData): T;
+export function formDataToObject<T extends Record<string, string> = Record<string, any>>(queryOrBody: URLSearchParams | ReadOnlyFormData): T {
     const data = {};
     const entries = queryOrBody.entries();
     let entry = entries.next();
@@ -42,7 +37,7 @@ export function getHttpResponse(status: StatusCode): EndpointOutput {
     }
 }
 
-export function validationDetailsToError(details: Joi.ValidationErrorItem[]): Record<string, ValidationErrorObject> {
+export function validationDetailsToError(details: Joi.ValidationErrorItem[]): JSONValue {
     const errorObject = details.reduce((acc, detail) => {
         acc[detail.context.key] = {
             reason: detail.message,

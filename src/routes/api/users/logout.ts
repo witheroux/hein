@@ -1,4 +1,7 @@
-export async function get(req) {
+import type { EndpointOutput } from "@sveltejs/kit/types/endpoint";
+
+
+export function get(): EndpointOutput {
     return {
         status: 303,
         headers: {

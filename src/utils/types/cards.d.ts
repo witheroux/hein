@@ -1,10 +1,10 @@
-import type { Category } from "./categories";
-import type { User } from "./users"
+import type { ICategory } from "./categories";
+import type { IUser } from "./users"
 
-export interface Card {
+export interface ICard {
     id: number;
     name: string;
     slug: string;
-    category: Category
-    created_by: User;
+    category: ICategory
+    created_by: IUser;
 }

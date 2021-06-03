@@ -1,11 +1,11 @@
-import type { Category } from "$utils/types/categories";
-import type { ServerRequest } from "@sveltejs/kit/types/endpoint";
+import type { EndpointOutput, JSONValue, ServerRequest } from "@sveltejs/kit/types/endpoint";
 
 import Joi from "joi";
 
 import { StatusCode } from "$utils/constants/httpResponse";
 import { formDataToObject, getHttpResponse, validationDetailsToError } from "$utils/helpers/request";
-import { db } from "$database";
+import { Category, db } from "$database";
+import type { QueryBuilder } from "objection";
 
 const getSchema = Joi.object({
     slug: Joi.string()
@@ -14,7 +14,7 @@ const getSchema = Joi.object({
         .optional()
 });
 
-export async function get({ query }: ServerRequest) {
+export async function get({ query }: ServerRequest): Promise<EndpointOutput> {
     const data = formDataToObject(query); 
     const { slug } = data;
 
@@ -29,8 +29,10 @@ export async function get({ query }: ServerRequest) {
         }
     }
 
-    let categoriesQuery = db.instance('hein_categories')
-        .select();
+    let categoriesQuery = Category.query()
+        .select()
+        .withGraphFetched('created_by')
+        .modifyGraph('created_by', (builder) => builder.select('id', 'uuid', 'name', 'username'));
 
     let categories: Category[] = [];
 
@@ -48,7 +50,7 @@ export async function get({ query }: ServerRequest) {
     return {
         status: 200,
         body: {
-            categories,
+            categories: categories as unknown as JSONValue,
         }
     }
 }
@@ -60,7 +62,7 @@ const postSchema = Joi.object({
         .required(),
 });
 
-export async function post(req) {
+export async function post(req): Promise<EndpointOutput> {
     const data = formDataToObject(req.body);
     const { name } = data;
     const { user } = req.locals;
@@ -80,22 +82,21 @@ export async function post(req) {
         }
     }
 
-    let category: Partial<Category>[] = [];
+    let category: Category;
     try {
-        category = await db.instance('hein_categories')
+        category = await Category.query()
             .insert({
                 name,
                 "created_by": user.id,
-            }, [
-                "slug"
-            ]);
+            })
+            .returning('slug');
     } catch (e) {
         // TODO (William): Log errors somewhere
         console.error(e);
     }
 
     // TODO (William): More explanation as to why it's a bad request
-    if (category.length === 0) {
+    if (!category) {
         return getHttpResponse(StatusCode.BAD_REQUEST);
     }
 

@@ -1,4 +1,4 @@
-export async function up(knex) {
+export function up(knex) {
     return knex.schema.raw(`
 CREATE FUNCTION set_slug_from_name() RETURNS trigger
     LANGUAGE plpgsql
@@ -39,7 +39,7 @@ $$
 }
 
 
-export async function down(knex) {
+export function down(knex) {
     return knex.schema.raw(`
 DROP FUNCTION IF EXISTS set_slug_from_name();
 DROP FUNCTION IF EXISTS slugify(v text);

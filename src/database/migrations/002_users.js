@@ -1,4 +1,4 @@
-export async function up(knex) {
+export function up(knex) {
     return knex.schema.raw(`
 CREATE TABLE hein_users (
     id integer NOT NULL,
@@ -33,7 +33,7 @@ ALTER TABLE ONLY hein_users
 }
 
 
-export async function down(knex) {
+export function down(knex) {
     return knex.schema.raw(`
 DROP TABLE IF EXISTS hein_users CASCADE;
 DROP SEQUENCE IF EXISTS hein_users_id_seq CASCADE;

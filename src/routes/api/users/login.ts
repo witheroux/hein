@@ -1,9 +1,8 @@
-import type { ServerRequest } from '@sveltejs/kit/types/endpoint';
-import type { User } from '$utils/types/users';
+import type { EndpointOutput, ServerRequest } from '@sveltejs/kit/types/endpoint';
 
 import { Buffer } from 'buffer';
 import Joi from 'joi';
-import { db } from '$database';
+import { User } from '$database';
 import { compare } from '$utils/helpers/password';
 import { formDataToObject, getHttpResponse, validationDetailsToError } from '$utils/helpers/request';
 import { StatusCode } from '$utils/constants/httpResponse';
@@ -15,7 +14,7 @@ export const schema = Joi.object({
         .required(),
 });
 
-export async function post({ body }: ServerRequest) {
+export async function post({ body }: ServerRequest): Promise<EndpointOutput> {
     const data = formDataToObject(body);
     const { username, password } = data;
     const { error } = schema.validate(data, { abortEarly: false });
@@ -31,9 +30,9 @@ export async function post({ body }: ServerRequest) {
 
     let user: Partial<User> | undefined;
     try {
-        user = await db.instance.select()
-            .from<User>('hein_users')
-            .where('username', '=', username)
+        user = await User.query()
+            .select()
+            .where({ username })
             .first();
     } catch (e) {
         // TODO (William): Log error somewhere
@@ -44,7 +43,7 @@ export async function post({ body }: ServerRequest) {
         return getHttpResponse(StatusCode.NOT_FOUND);
     }
 
-    if (!await compare(password, user.password)) {
+    if (!await compare(password, user?.password)) {
         return getHttpResponse(StatusCode.UNAUTHORIZED);
     }
 

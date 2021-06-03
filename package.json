@@ -10,7 +10,7 @@
     "knex": "knex --knexfile ./knexfile.mjs --esm",
     "migrate": "knex --knexfile ./knexfile.mjs migrate:latest --esm",
     "migrate:up": "knex --knexfile ./knexfile.mjs migrate:up --esm",
-    "migrate:down": "knex --knexfile ./knexfile.mjs migrate:down --esm --debug",
+    "migrate:down": "knex --knexfile ./knexfile.mjs migrate:down --esm",
     "migrate:unlock": "knex --knexfile ./knexfile.mjs migrate:unlock --esm"
   },
   "devDependencies": {

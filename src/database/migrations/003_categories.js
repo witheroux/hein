@@ -1,4 +1,4 @@
-export async function up(knex) {
+export function up(knex) {
     return knex.schema.raw(`
 CREATE TABLE hein_categories (
     id integer NOT NULL,
@@ -34,7 +34,7 @@ CREATE TRIGGER trg_slug_insert BEFORE INSERT ON hein_categories FOR EACH ROW WHE
 }
 
 
-export async function down(knex) {
+export function down(knex) {
     return knex.schema.raw(`
 DROP TABLE IF EXISTS hein_categories CASCADE;
 DROP SEQUENCE IF EXISTS hein_categories_id_seq CASCADE;

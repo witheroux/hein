@@ -1,4 +1,4 @@
-export async function up(knex) {
+export function up(knex) {
     return knex.schema.raw(`
 CREATE EXTENSION IF NOT EXISTS unaccent;
 COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
@@ -9,7 +9,7 @@ COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UU
 }
 
 
-export async function down(knex) {
+export function down(knex) {
     return knex.schema.raw(`
 DROP EXTENSION IF EXISTS unaccent;
 DROP EXTENSION IF EXISTS "uuid-ossp";

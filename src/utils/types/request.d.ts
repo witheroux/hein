@@ -1,8 +1,8 @@
-import type { User } from "./users";
+import type { IUser } from "./users";
 
 export interface Session {
     flash?: Flash[];
-    user?: Exclude<User, 'password'>;
+    user?: Exclude<IUser, 'password'>;
 }
 
 export interface Flash {

@@ -1,8 +1,8 @@
-import type { User } from "./users"
+import type { IUser } from "./users"
 
-export interface Category {
+export interface ICategory {
     id: number;
     name: string;
     slug: string;
-    created_by: User;
+    created_by: IUser;
 }

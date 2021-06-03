@@ -1,18 +1,28 @@
+import type { RelationMapping } from 'objection';
+import type { ICard } from '$utils/types/cards';
+import type { ICategory } from '$utils/types/categories';
+import type { IUser } from '$utils/types/users';
+
 import { Model } from 'objection';
 
 import { Category } from './Category';
 import { User } from './User';
 
-export class Card extends Model {
-    static get tableName() {
+export class Card extends Model implements ICard {
+    id: number;
+    name: string;
+    slug: string;
+    category: ICategory;
+    created_by: IUser;
+    static get tableName(): string {
         return 'hein_categories';
     }
 
-    static get idColumn() {
+    static get idColumn(): string {
         return 'id';
     }
 
-    static get relationMappings() {
+    static get relationMappings(): Record<string, RelationMapping<Model>> {
         return {
             "created_by": {
                 relation: Model.BelongsToOneRelation,
