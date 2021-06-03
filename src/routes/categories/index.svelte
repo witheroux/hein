@@ -32,7 +32,6 @@
 
   const { logged } = getContext(USER_CONTEXT_KEY);
   export let categories: ICategory[] = [];
-  console.log(categories);
 </script>
 
 <svelte:head>

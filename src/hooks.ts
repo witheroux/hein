@@ -15,8 +15,8 @@ export const handle: Handle = async ({ request, render }): Promise<ServerRespons
         db.init();
     }
 
-    if (request.query.has('_method')) {
-		request.method = request.query.get('_method').toUpperCase();
+    if (request.query.has('_method') || request.body?.has('_method')) {
+		request.method = request.query.get('_method')?.toUpperCase() || request.body?.get('_method')?.toUpperCase() || request.method;
 	}
 
     request.locals.userid = userid || uuid();

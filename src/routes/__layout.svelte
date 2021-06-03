@@ -3,15 +3,14 @@
 
   export async function load({ session }: LoadInput): Promise<LoadOutput> {
     const { user } = session;
-    const { name, uuid } = user;
-
-    console.log(user);
+    const { name, uuid, id } = user;
 
     return {
       props: {
         logged: !!uuid,
         name,
-        uuid
+        uuid,
+        id
       }
     };
   }
@@ -30,8 +29,9 @@
   export let logged;
   export let name;
   export let uuid;
+  export let id;
 
-  setContext(USER_CONTEXT_KEY, { logged, name, uuid });
+  setContext(USER_CONTEXT_KEY, { logged, name, uuid, id });
 </script>
 
 <Header />

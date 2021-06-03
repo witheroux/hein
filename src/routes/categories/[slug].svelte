@@ -40,17 +40,37 @@
   import { TITLE_SEPARATOR, TITLE_SUFFIX } from '$utils/constants/labels';
   import { USER_CONTEXT_KEY } from '$utils/constants/contexts';
 
-  const { logged } = getContext(USER_CONTEXT_KEY);
   export let category: ICategory;
 
-  console.log(category);
+  const { id } = getContext(USER_CONTEXT_KEY);
+
+  let modify = false;
+  let isOwner = category.created_by_id === id;
+  let value = category.name;
+
+  function toggleModify() {
+    modify = !modify;
+  }
 </script>
 
 <svelte:head>
   <title>{category.name} {TITLE_SEPARATOR} Catégories {TITLE_SEPARATOR} {TITLE_SUFFIX}</title>
 </svelte:head>
 
-<h1>{category.name}</h1>
+{#if modify && isOwner}
+  <form method="POST" action="/api/categories">
+    <input type="hidden" name="_method" value="PATCH" />
+    <input type="hidden" name="id" value={category.id} />
+    <input name="name" {value} />
+    <button type="submit">Soumettre</button>
+    <button type="button" on:click={toggleModify}>Annuler</button>
+  </form>
+{:else if isOwner}
+  <h1>{category.name}</h1>
+  <button type="button" on:click={toggleModify}>Modifier</button>
+{:else}
+  <h1>{category.name}</h1>
+{/if}
 
 {#if category.created_by_id !== 0}
   <p>
@@ -58,6 +78,14 @@
       >{category.created_by.name}</a
     >
   </p>
+{/if}
+
+{#if isOwner}
+  <form method="POST" action="/api/categories">
+    <input type="hidden" name="_method" value="DELETE" />
+    <input type="hidden" name="id" value={category.id} />
+    <button type="submit">Supprimer</button>
+  </form>
 {/if}
 
 <a href="/categories">Retour aux catégories</a>
