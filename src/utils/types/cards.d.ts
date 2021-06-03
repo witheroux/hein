@@ -5,6 +5,8 @@ export interface ICard {
     id: number;
     name: string;
     slug: string;
-    category_id: ICategory
-    created_by_id: IUser;
+    category_id: number;
+    category: ICategory;
+    created_by_id: number;
+    created_by: IUser;
 }
