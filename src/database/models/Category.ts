@@ -9,7 +9,8 @@ export class Category extends Model implements ICategory {
     id: number;
     name: string;
     slug: string;
-    created_by_id: IUser;
+    created_by_id: number;
+    created_by: IUser;
 
     static get tableName(): string {
         return 'hein_categories';

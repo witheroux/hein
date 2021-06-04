@@ -1,13 +1,18 @@
 import type { EndpointOutput, JSONValue, ServerRequest } from "@sveltejs/kit/types/endpoint";
+import type { ICard } from "$utils/types/cards";
 
 import Joi from "joi";
 
 import { StatusCode } from "$utils/constants/httpResponse";
 import { formDataToObject, getHttpResponse, validationDetailsToError } from "$utils/helpers/request";
-import { Category } from "$database";
+import { Card, Category } from "$database";
 
 const getSchema = Joi.object({
     slug: Joi.string()
+        .min(3)
+        .max(128)
+        .optional(),
+    category: Joi.string()
         .min(3)
         .max(128)
         .optional()
@@ -15,7 +20,7 @@ const getSchema = Joi.object({
 
 export async function get({ query }: ServerRequest): Promise<EndpointOutput> {
     const data = formDataToObject(query); 
-    const { slug } = data;
+    const { category, slug } = data;
 
     const { error } = getSchema.validate(query, { allowUnknown: true });
 
@@ -28,19 +33,25 @@ export async function get({ query }: ServerRequest): Promise<EndpointOutput> {
         }
     }
 
-    let categoriesQuery = Category.query()
+    let cardQuery = Card.query()
         .select()
-        .withGraphFetched('created_by')
+        .withGraphFetched('[created_by, category]')
         .modifyGraph('created_by', (builder) => builder.select('id', 'uuid', 'name', 'username'));
 
-    let categories: Category[] = [];
+    let cards: Card[] = [];
+
+    if (category) {
+        cardQuery = cardQuery
+            .innerJoin(Category.tableName, `${Category.tableName}.id`, `${Card.tableName}.category_id`)
+            .where(`${Category.tableName}.slug`, category);
+    }
 
     if (slug) {
-        categoriesQuery = categoriesQuery.where({ slug });
+        cardQuery = cardQuery.where(`${Card.tableName}.slug`, slug);
     }
 
     try {
-        categories = await categoriesQuery;
+        cards = await cardQuery;
     } catch (e) {
         // TODO (William): Log error somewhere
         console.error(e);
@@ -50,7 +61,7 @@ export async function get({ query }: ServerRequest): Promise<EndpointOutput> {
     return {
         status: 200,
         body: {
-            categories: categories as unknown as JSONValue,
+            cards: cards as unknown as JSONValue,
         }
     }
 }
@@ -60,11 +71,13 @@ const postSchema = Joi.object({
         .min(3)
         .max(128)
         .required(),
+    category_id: Joi.number()
+        .required(),
 });
 
 export async function post({ body, locals }: ServerRequest): Promise<EndpointOutput> {
     const data = formDataToObject(body);
-    const { name } = data;
+    const { name, category_id } = data;
     const { user } = locals;
 
     if (!user) {
@@ -82,14 +95,15 @@ export async function post({ body, locals }: ServerRequest): Promise<EndpointOut
         }
     }
 
-    let category: Category;
+    let card: ICard;
     try {
-        category = await Category.query()
-            .insert({
+        card = await Card.query()
+            .insertAndFetch({
                 name,
-                "created_by_id": user.id,
+                category_id: parseInt(category_id),
+                created_by_id: user.id,
             })
-            .returning('slug');
+            .withGraphFetched('category');
     } catch (e) {
         // TODO (William): Log errors somewhere
         console.error(e);
@@ -97,14 +111,14 @@ export async function post({ body, locals }: ServerRequest): Promise<EndpointOut
     }
 
     // TODO (William): More explanation as to why it's a bad request
-    if (!category) {
+    if (!card) {
         return getHttpResponse(StatusCode.BAD_REQUEST);
     }
 
     return {
         status: 303,
         headers: {
-            location: `/categories/${category.slug}`
+            location: `/cartes/${card.category.slug}/${card.slug}`
         }
     }
 }
@@ -116,11 +130,13 @@ const patchSchema = Joi.object({
         .required(),
     id: Joi.number()
         .required(),
+    category_id: Joi.number()
+        .required(),
 });
 
 export async function patch({ body, locals }: ServerRequest): Promise<EndpointOutput> {
     const data = formDataToObject(body);
-    const { name, id } = data;
+    const { name, id, category_id } = data;
     const { user } = locals;
 
     if (!user) {
@@ -138,9 +154,9 @@ export async function patch({ body, locals }: ServerRequest): Promise<EndpointOu
         }
     }
 
-    let category: Category;
+    let card: Card;
     try {
-        category = await Category.query()
+        card = await Card.query()
             .select()
             .andWhere('id', '=', id)
             .first();
@@ -151,17 +167,18 @@ export async function patch({ body, locals }: ServerRequest): Promise<EndpointOu
     }
 
     // TODO (William): More explanation as to why it's a bad request
-    if (!category) {
+    if (!card) {
         return getHttpResponse(StatusCode.BAD_REQUEST);
     }
 
-    if (category.created_by_id !== user.id) {
+    if (card.created_by_id !== user.id) {
         return getHttpResponse(StatusCode.FORBIDDEN);
     }
 
     try {
-        await Category.query()
-            .updateAndFetchById(id, { name });
+        card = await Card.query()
+            .updateAndFetchById(id, { name, category_id })
+            .withGraphFetched('category');
     } catch (e) {
         // TODO (William): Log errors somewhere
         console.error(e);
@@ -171,7 +188,7 @@ export async function patch({ body, locals }: ServerRequest): Promise<EndpointOu
     return {
         status: 303,
         headers: {
-            location: `/categories/${category.slug}`
+            location: `/cartes/${card.category.slug}/${card.slug}`
         }
     }
 }
@@ -201,9 +218,9 @@ export async function del({ body, locals }: ServerRequest): Promise<EndpointOutp
         }
     }
 
-    let category: Category;
+    let card: Card;
     try {
-        category = await Category.query()
+        card = await Card.query()
             .select()
             .where('id', '=', id)
             .first();
@@ -213,12 +230,12 @@ export async function del({ body, locals }: ServerRequest): Promise<EndpointOutp
         return getHttpResponse(StatusCode.INTERNAL_SERVER_ERROR);
     }
 
-    if (category.created_by_id !== user.id) {
+    if (card.created_by_id !== user.id) {
         return getHttpResponse(StatusCode.FORBIDDEN);
     }
 
     try {
-        await Category.query()
+        await Card.query()
             .deleteById(id)
     } catch (e) {
         // TODO (William): Log errors somewhere
@@ -229,7 +246,7 @@ export async function del({ body, locals }: ServerRequest): Promise<EndpointOutp
     return {
         status: 303,
         headers: {
-            location: `/categories`
+            location: `/cartes`
         }
     }
 }
