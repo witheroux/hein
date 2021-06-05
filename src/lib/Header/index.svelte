@@ -1,24 +1,38 @@
 <script lang="ts">
   import logo from './logo.png';
-  import { getContext } from 'svelte';
-  import { USER_CONTEXT_KEY } from '$utils/constants/contexts';
 
-  const { logged, name } = getContext(USER_CONTEXT_KEY);
+  import HiddenText from '$lib/HiddenText/index.svelte';
+  import Menu from '$lib/Menu/index.svelte';
+  import Footer from '$lib/Footer/index.svelte';
+
+  export let className;
+
+  let toggled = false;
 </script>
 
-<header>
-  <a href="/">
-    <img src={logo} alt="Hein?" />
-  </a>
-
-  {#if logged}
-    Salut {name}!
-    <a href="/api/users/logout">Se déconnecter</a>
-  {:else}
-    <a href="/connexion">Connexion</a>
-    <a href="/creer-un-compte">Créer un compte</a>
-  {/if}
+<header class="flex flex-col {className}">
+  <div class="align-center">
+    <button type="button" class="tablet:hidden">
+      <HiddenText>
+        {toggled ? 'Fermer le menu' : 'Ouvrir le menu'}
+      </HiddenText>
+    </button>
+    <a href="/">
+      <img src={logo} alt="Hein?" />
+    </a>
+  </div>
+  <nav class="flex flex-col h-full justify-between self-stretch">
+    <Menu />
+    <Footer />
+  </nav>
 </header>
 
 <style lang="postcss">
+  header {
+    min-width: 300px;
+  }
+  img {
+    width: 269px;
+    height: 115px;
+  }
 </style>

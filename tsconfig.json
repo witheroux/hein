@@ -26,7 +26,8 @@
 			"$database": ["src/database"],
 			"$lib/*": ["src/lib/*"],
 			"$utils/*": ["src/utils/*"]
-		}
+		},
+		"types": ["vite/client"]
 	},
 	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte"]
 }

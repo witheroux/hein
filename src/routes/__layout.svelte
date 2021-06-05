@@ -20,7 +20,6 @@
   import { setContext } from 'svelte';
 
   import Header from '$lib/Header/index.svelte';
-  import Sidebar from '$lib/Sidebar/index.svelte';
 
   import { USER_CONTEXT_KEY } from '$utils/constants/contexts';
 
@@ -34,16 +33,16 @@
   setContext(USER_CONTEXT_KEY, { logged, name, uuid, id });
 </script>
 
-<Header />
+<div class="bg-purple-700 h-screen tablet:grid tablet:grid-cols-12">
+  <Header className="col-start-1 col-end-4" />
 
-<div>
-  <main>
+  <main class="col-start-5 col-end-13" style="background: rgba(0,0,0,0.5)">
     <slot />
   </main>
-  <Sidebar />
 </div>
 
-<footer>Développé avec ❤️ par William © 2021</footer>
-
-<style lang="postcss">
+<style global lang="postcss">
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
 </style>

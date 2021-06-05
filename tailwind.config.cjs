@@ -9,6 +9,10 @@ module.exports = {
 			'laptop': '1024px',
 			'desktop': '1280px',
 		},
+		fontFamily: {
+			'text': ['Lato', 'sans-serif'],
+			'title': ['Sigmar One', 'sans-serif']
+		},
 		colors: {
 			transparent: 'transparent',
 			current: 'currentColor',

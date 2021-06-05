@@ -35,6 +35,7 @@ export async function get({ query }: ServerRequest): Promise<EndpointOutput> {
 
     let cardQuery = Card.query()
         .select()
+        .orderBy('name')
         .withGraphFetched('[created_by, category]')
         .modifyGraph('created_by', (builder) => builder.select('id', 'uuid', 'name', 'username'));
 
