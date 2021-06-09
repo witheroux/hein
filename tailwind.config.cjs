@@ -27,12 +27,24 @@ module.exports = {
 				600: '#EE8243',
 			},
 			purple: {
-				100: '#F2EDF2',
+				100: '#F6EEF4',
 				300: '#AC4094',
 				700: '#54478B',
 			},
 		},
-		extend: {},
+		extend: {
+			minHeight: {
+				16: '4rem',
+			},
+
+			borderRadius: {
+				"6xl": '3rem'
+			},
+
+			gridTemplateColumns: {
+				"game": "minmax(300px, 1fr) 3fr"
+			}
+		},
 	},
 	plugins: [],
 };

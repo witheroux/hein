@@ -10,11 +10,5 @@
   <title>Accueil {TITLE_SEPARATOR} {TITLE_SUFFIX}</title>
 </svelte:head>
 
-{#if logged}
-  <div>Jouer</div>
-{:else}
-  <div>Accueil</div>
-{/if}
-
 <style lang="postcss">
 </style>

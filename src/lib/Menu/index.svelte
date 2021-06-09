@@ -6,17 +6,14 @@
   import MenuItem from '$lib/MenuItem/index.svelte';
 </script>
 
-<div>
-  <MenuItem href="/api/play">
-    <svelte:fragment slot="icon">{playIcon}</svelte:fragment>
+<div class="flex flex-col space-y-4">
+  <MenuItem href="/api/play" icon={playIcon}>
     <svelte:fragment slot="text">Jouer</svelte:fragment>
   </MenuItem>
-  <MenuItem href="/categories">
-    <svelte:fragment slot="icon">{categoriesIcon}</svelte:fragment>
+  <MenuItem href="/categories" icon={categoriesIcon}>
     <svelte:fragment slot="text">Catégories</svelte:fragment>
   </MenuItem>
-  <MenuItem href="/cartes">
-    <svelte:fragment slot="icon">{cardsIcon}</svelte:fragment>
+  <MenuItem href="/cartes" icon={cardsIcon}>
     <svelte:fragment slot="text">Cartes</svelte:fragment>
   </MenuItem>
 </div>

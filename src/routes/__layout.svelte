@@ -33,10 +33,12 @@
   setContext(USER_CONTEXT_KEY, { logged, name, uuid, id });
 </script>
 
-<div class="bg-purple-700 h-screen tablet:grid tablet:grid-cols-12">
-  <Header className="col-start-1 col-end-4" />
+<div class="bg-purple-700 h-screen tablet:grid tablet:grid-cols-game overflow-hidden">
+  <Header className="overflow-y-auto" />
 
-  <main class="col-start-5 col-end-13" style="background: rgba(0,0,0,0.5)">
+  <main
+    class="overflow-y-auto flex items-center justify-center p-4 tablet:bg-gray-700 tablet:bg-opacity-50"
+  >
     <slot />
   </main>
 </div>

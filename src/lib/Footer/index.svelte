@@ -4,7 +4,7 @@
 
 <footer>
   <AuthMenu />
-  <p class="font-text text-xs text-gray-100">Développé avec ❤️ par William © 2021</p>
+  <p class="mt-4 font-text text-xs text-gray-100">Développé avec ❤️ par William © 2021</p>
 </footer>
 
 <!-- 

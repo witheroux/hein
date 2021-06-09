@@ -10,8 +10,8 @@
   let toggled = false;
 </script>
 
-<header class="flex flex-col {className}">
-  <div class="align-center">
+<header class="flex flex-col align-start w-full p-8 pt-0 {className}">
+  <div class="w-100 text-center sticky top-0">
     <button type="button" class="tablet:hidden">
       <HiddenText>
         {toggled ? 'Fermer le menu' : 'Ouvrir le menu'}
@@ -21,7 +21,7 @@
       <img src={logo} alt="Hein?" />
     </a>
   </div>
-  <nav class="flex flex-col h-full justify-between self-stretch">
+  <nav class="flex flex-col h-full justify-between">
     <Menu />
     <Footer />
   </nav>

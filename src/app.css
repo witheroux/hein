@@ -3,6 +3,18 @@
 @import '@fontsource/sigmar-one';
 
 :root {
+  --gray-100: '#F5F5F5';
+  --gray-300: '#D1CCC6';
+  --gray-700: '#2D2A28';
+
+  --orange-50: '#FFFAF2';
+  --orange-300: '#FDE0B9';
+  --orange-600: '#EE8243';
+
+  --purple-100: '#F2EDF2';
+  --purple-300: '#AC4094';
+  --purple-700: '#54478B';
+
   font-family: 'Lato', Arial, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
     Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }

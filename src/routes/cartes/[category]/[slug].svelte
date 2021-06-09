@@ -67,11 +67,11 @@
   <form method="POST" action="/api/cards">
     <input type="hidden" name="_method" value="PATCH" />
     <input type="hidden" name="id" value={card.id} />
-    <input name="name" {value} />
+    <input name="name" bind:value />
 
     <label>
       Catégorie
-      <select name="category_id">
+      <select name="category_id" bind:value={selectedCategory}>
         {#each categories as category}
           <option value={category.id} selected={selectedCategory == category.id}
             >{category.name}</option
