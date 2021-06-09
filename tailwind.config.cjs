@@ -31,6 +31,9 @@ module.exports = {
 				300: '#AC4094',
 				700: '#54478B',
 			},
+			red: {
+				500: '#EF4444',
+			}
 		},
 		extend: {
 			minHeight: {
