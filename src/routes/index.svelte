@@ -9,6 +9,3 @@
 <svelte:head>
   <title>Accueil {TITLE_SEPARATOR} {TITLE_SUFFIX}</title>
 </svelte:head>
-
-<style lang="postcss">
-</style>

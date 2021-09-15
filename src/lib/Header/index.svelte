@@ -1,38 +1,72 @@
 <script lang="ts">
+  import { fly } from 'svelte/transition';
+  import { quadInOut } from 'svelte/easing';
+
   import logo from './logo.png';
 
-  import HiddenText from '$lib/HiddenText/index.svelte';
   import Menu from '$lib/Menu/index.svelte';
+  import MenuButton from '$lib/MenuButton/index.svelte';
   import Footer from '$lib/Footer/index.svelte';
 
   export let className;
 
   let toggled = false;
+  let width = 1280;
+  let isMobile = false;
+
+  $: isMobile = width < 640;
 </script>
 
-<header class="flex flex-col align-start w-full p-8 pt-0 {className}">
-  <div class="w-100 text-center sticky top-0">
-    <button type="button" class="tablet:hidden">
-      <HiddenText>
-        {toggled ? 'Fermer le menu' : 'Ouvrir le menu'}
-      </HiddenText>
-    </button>
-    <a href="/">
-      <img src={logo} alt="Hein?" />
+<svelte:window bind:innerWidth={width} />
+
+<header
+  class="flex flex-col align-start w-full tablet:bg-none shadow-none tablet:shadow-xl {className}"
+>
+  <div
+    class="w-full h-full tablet:h-auto text-center flex items-center sticky top-0 z-10 px-8 flex-shrink-0 duration-75"
+    class:delay-300={toggled && isMobile}
+    class:bg-gray-700={toggled && isMobile}
+    class:transition={toggled && isMobile}
+  >
+    <MenuButton
+      {toggled}
+      on:click={() => (toggled = !toggled)}
+      className="flex-shrink-0 relative z-10"
+    />
+    <a
+      href="/"
+      class="fixed left-1/2 transform -translate-x-1/2 tablet:transform-none tablet:static"
+    >
+      <img class="max-w-full h-auto mx-auto block" src={logo} alt="Hein?" />
     </a>
   </div>
-  <nav class="flex flex-col h-full justify-between">
-    <Menu />
-    <Footer />
-  </nav>
+  {#if toggled || !isMobile}
+    <nav
+      transition:fly={{
+        duration: isMobile ? 250 : 0,
+        opacity: 1,
+        x: -width,
+        y: 0,
+        easing: quadInOut
+      }}
+      class="flex flex-col fixed bg-gray-700 tablet:bg-transparent tablet:static pt-40 p-8 tablet:pt-8 left-0 top-0 bottom-0 w-full tablet:w-auto h-full justify-between overflow-y-auto"
+    >
+      <Menu />
+      <Footer />
+    </nav>
+  {/if}
 </header>
 
 <style lang="postcss">
   header {
     min-width: 300px;
   }
-  img {
-    width: 269px;
+
+  header > div {
     height: 115px;
+  }
+
+  img {
+    width: 250px;
   }
 </style>

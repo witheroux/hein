@@ -1,10 +1,10 @@
-import type { EndpointOutput, ServerRequest } from '@sveltejs/kit/types/endpoint';
+import type { EndpointOutput } from '@sveltejs/kit/types/endpoint';
+import type { ServerRequest } from '@sveltejs/kit/types/hooks';
 
 import Joi from 'joi';
 
-
 import { encrypt } from '$utils/helpers/password';
-import { formDataToObject, getHttpResponse, validationDetailsToError } from '$utils/helpers/request';
+import { formDataToObject, getHttpResponse, isReadOnlyFormData, validationDetailsToError } from '$utils/helpers/request';
 import { StatusCode } from '$utils/constants/httpResponse';
 import { User } from '$database';
 
@@ -29,6 +29,9 @@ export const schema = Joi.object({
 
 export async function post(req: ServerRequest): Promise<EndpointOutput> {
     const { body } = req;
+
+    if (!isReadOnlyFormData(body)) return getHttpResponse(StatusCode.BAD_REQUEST);
+
     const data = formDataToObject(body);
     const { username, name, password } = data;
     const { error } = await schema.validate(data, { abortEarly: false });
@@ -75,7 +78,7 @@ export async function post(req: ServerRequest): Promise<EndpointOutput> {
         status: 303,
         headers: {
             location: '/',
-            'set-cookie': `user=${Buffer.from(JSON.stringify({...user})).toString()}; Path=/; HttpOnly; SameSite=strict`,
+            'set-cookie': `user=${Buffer.from(JSON.stringify({ ...user })).toString()}; Path=/; HttpOnly; SameSite=strict`,
         },
     }
 }

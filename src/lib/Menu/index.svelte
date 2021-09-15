@@ -6,7 +6,7 @@
   import MenuItem from '$lib/MenuItem/index.svelte';
 </script>
 
-<div class="flex flex-col space-y-4">
+<div class="flex flex-col space-y-5 mb-12">
   <MenuItem href="/api/play" icon={playIcon}>
     <svelte:fragment slot="text">Jouer</svelte:fragment>
   </MenuItem>

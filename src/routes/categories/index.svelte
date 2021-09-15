@@ -49,7 +49,11 @@
   </form>
 {/if}
 
-<h1>Liste des catégories</h1>
+<h1
+  class="font-title text-2xl bg-clip-text text-transparent bg-gradient-to-b from-purple-300 to-purple-700"
+>
+  Catégories
+</h1>
 <ul>
   {#if categories.length !== 0}
     {#each categories as category}

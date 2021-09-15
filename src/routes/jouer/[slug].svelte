@@ -37,7 +37,7 @@
   import { goto } from '$app/navigation';
 
   import Button from '$lib/Button/index.svelte';
-  import Card from '$lib/Card/index.svelte';
+  import PlayingCard from '$lib/PlayingCard/index.svelte';
   import Timer from '$lib/Timer/index.svelte';
 
   import { TITLE_SEPARATOR, TITLE_SUFFIX } from '$utils/constants/labels';
@@ -53,11 +53,12 @@
   <title>{card.name} {TITLE_SEPARATOR} {TITLE_SUFFIX}</title>
 </svelte:head>
 
-<section class="flex flex-col justify-between items-center w-full">
+<section class="flex flex-col items-center w-full my-2">
   <Timer />
-  <div class="flex flex-col items-center my-12 w-full text-center">
+
+  <div class="flex flex-col items-center my-6 tablet:my-12 w-full text-center">
     <p class="font-title text-gray-300 text-2xl hidden laptop:block mb-2">Votre carte</p>
-    <Card category={card.category.name} card={card.name} />
+    <PlayingCard category={card.category.name} card={card.name} />
   </div>
 
   <Button on:click={redirectToNewCard}>Nouvelle carte</Button>

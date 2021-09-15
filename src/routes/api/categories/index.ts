@@ -1,10 +1,12 @@
-import type { EndpointOutput, JSONValue, ServerRequest } from "@sveltejs/kit/types/endpoint";
+import type { EndpointOutput } from "@sveltejs/kit/types/endpoint";
+import type { ServerRequest } from "@sveltejs/kit/types/hooks";
 
 import Joi from "joi";
 
 import { StatusCode } from "$utils/constants/httpResponse";
-import { formDataToObject, getHttpResponse, validationDetailsToError } from "$utils/helpers/request";
+import { formDataToObject, getHttpResponse, isReadOnlyFormData, validationDetailsToError } from "$utils/helpers/request";
 import { Category } from "$database";
+import type { JSONValue } from "@sveltejs/kit/types/helper";
 
 const getSchema = Joi.object({
     slug: Joi.string()
@@ -14,7 +16,7 @@ const getSchema = Joi.object({
 });
 
 export async function get({ query }: ServerRequest): Promise<EndpointOutput> {
-    const data = formDataToObject(query); 
+    const data = formDataToObject(query);
     const { slug } = data;
 
     const { error } = getSchema.validate(query, { allowUnknown: true });
@@ -64,6 +66,8 @@ const postSchema = Joi.object({
 });
 
 export async function post({ body, locals }: ServerRequest): Promise<EndpointOutput> {
+    if (!isReadOnlyFormData(body)) return getHttpResponse(StatusCode.BAD_REQUEST);
+
     const data = formDataToObject(body);
     const { name } = data;
     const { user } = locals;
@@ -71,7 +75,7 @@ export async function post({ body, locals }: ServerRequest): Promise<EndpointOut
     if (!user) {
         return getHttpResponse(StatusCode.UNAUTHORIZED);
     }
-    
+
     const validation = postSchema.validate(data, { allowUnknown: true });
 
     if (validation.error) {
@@ -120,6 +124,8 @@ const patchSchema = Joi.object({
 });
 
 export async function patch({ body, locals }: ServerRequest): Promise<EndpointOutput> {
+    if (!isReadOnlyFormData(body)) return getHttpResponse(StatusCode.BAD_REQUEST);
+
     const data = formDataToObject(body);
     const { name, id } = data;
     const { user } = locals;
@@ -127,7 +133,7 @@ export async function patch({ body, locals }: ServerRequest): Promise<EndpointOu
     if (!user) {
         return getHttpResponse(StatusCode.UNAUTHORIZED);
     }
-    
+
     const validation = patchSchema.validate(data, { allowUnknown: true, abortEarly: false });
 
     if (validation.error) {
@@ -183,6 +189,8 @@ const delSchema = Joi.object({
 });
 
 export async function del({ body, locals }: ServerRequest): Promise<EndpointOutput> {
+    if (!isReadOnlyFormData(body)) return getHttpResponse(StatusCode.BAD_REQUEST);
+
     const data = formDataToObject(body);
     const { id } = data;
     const { user } = locals;

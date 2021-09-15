@@ -5,7 +5,6 @@
 <svelte:head>
   <title>Créer un compte {TITLE_SEPARATOR} {TITLE_SUFFIX}</title>
 </svelte:head>
-
 <div>Créer un compte</div>
 
 <form method="POST" action="/api/users/signup">

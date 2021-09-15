@@ -45,11 +45,13 @@
     {isStarted ? 'Arrêter le sablier' : 'Démarrer le sablier'}
   </Button>
 
-  <p class="font-title text-2xl text-gray-300 mt-12">Temps restant</p>
+  <p class="font-title text-lg tablet:text-2xl text-gray-300 mb-1 mt-6 tablet:mt-12">
+    Temps restant
+  </p>
   <div class="flex items-center text-orange-600" class:rotate={isStarted && time !== 0}>
     {@html hourglassIcon}
     <p
-      class="font-title text-gray-100 text-5xl mb-2 ml-4 text-center"
+      class="font-title text-gray-100 text-3xl mb-2 ml-4 text-center"
       class:blink={isStarted && time <= 10}
       aria-live="polite"
     >
@@ -102,6 +104,6 @@
   }
 
   div > div > p {
-    width: 7rem;
+    width: 4.5rem;
   }
 </style>
