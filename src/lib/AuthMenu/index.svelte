@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import Link from '$lib/LinK/index.svelte';
+  import Link from '$lib/Link/index.svelte';
   import { USER_CONTEXT_KEY } from '$utils/constants/contexts';
 
   const { logged, name } = getContext(USER_CONTEXT_KEY);

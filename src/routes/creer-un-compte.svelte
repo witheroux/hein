@@ -1,35 +1,63 @@
 <script lang="ts">
   import { TITLE_SEPARATOR, TITLE_SUFFIX } from '$utils/constants/labels';
+
+  import Block from '$lib/Block/index.svelte';
+  import Button from '$lib/Button/index.svelte';
+  import Input from '$lib/Input/index.svelte';
+  import Link from '$lib/Link/index.svelte';
 </script>
 
 <svelte:head>
   <title>Créer un compte {TITLE_SEPARATOR} {TITLE_SUFFIX}</title>
 </svelte:head>
-<div>Créer un compte</div>
 
-<form method="POST" action="/api/users/signup">
-  <label>
-    <span>Utilisateur</span>
-    <input name="username" />
-  </label>
+<Block>
+  <h1 class="font-title text-4xl bg-clip-text text-transparent bg-gradient-to-b from-orange-300 to-orange-600">
+    Bienvenue!
+  </h1>
+  <p class="font-text text-gray-700 text-lg max-w-xs m-auto mb-7" >
+    Créez-vous un compte pour ajouter des cartes et des catégories.
+  </p>
 
-  <label>
-    <span>Nom</span>
-    <input name="name" />
-  </label>
+  <form method="POST" action="/api/users/signup" class="flex flex-col">
 
-  <label>
-    <span>Mot de passe</span>
-    <input name="password" type="password" />
-  </label>
+    <Input 
+      name="username" 
+      label="Utilisateur"
+      id="username"
+      placeholder="coolguy123"
+    />
 
-  <label>
-    <span>Confirmer le mot de passe</span>
-    <input name="confirmPassword" type="password" />
-  </label>
+    <Input 
+      name="name" 
+      label="Nom"
+      id="name"
+      placeholder="Cool Guy"
+    />
 
-  <button type="submit">Créer un compte</button>
-</form>
+    <Input
+      name="password"
+      label="Mot de passe"
+      id="password"
+      type="password"
+      placeholder="●●●●●●●●●●●"
+    />
 
-<style lang="postcss">
-</style>
+    <Input
+      name="confirm-password"
+      label="Confirmer Mot de passe"
+      id="confirm-password"
+      type="password"
+      placeholder="●●●●●●●●●●●"
+    />
+
+    <Button type="submit" isSmall>Me connecter</Button>
+  </form>
+
+  <svelte:fragment slot="bottom">
+    <p class="text-center">
+      Déjà un compte? 
+      <Link className="ml-1" href="/connexion">Me connecter</Link>
+    </p>
+  </svelte:fragment>
+</Block>

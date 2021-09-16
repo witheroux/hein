@@ -18,6 +18,7 @@ module.exports = {
 			current: 'currentColor',
 			gray: {
 				100: '#F5F5F5',
+				200: '#C4C4C4',
 				300: '#D1CCC6',
 				700: '#2D2A28',
 			},
