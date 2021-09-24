@@ -4,7 +4,7 @@ import type { ServerRequest } from '@sveltejs/kit/types/hooks';
 import Joi from 'joi';
 
 import { encrypt } from '$utils/helpers/password';
-import { formDataToObject, getHttpResponse, isReadOnlyFormData, validationDetailsToError } from '$utils/helpers/request';
+import { flash, formDataToObject, getHttpResponse, isEnhanced, isReadOnlyFormData, validationDetailsToError, validationDetailsToText } from '$utils/helpers/request';
 import { StatusCode } from '$utils/constants/httpResponse';
 import { User } from '$database';
 
@@ -27,22 +27,45 @@ export const schema = Joi.object({
 })
     .with('password', 'confirmPassword');
 
-export async function post(req: ServerRequest): Promise<EndpointOutput> {
-    const { body } = req;
+export async function post({ body, locals, headers }: ServerRequest): Promise<EndpointOutput> {
+    const { session } = locals;
+    const enhanced = isEnhanced(headers);
+    
+    if (!isReadOnlyFormData(body)) {
+        if (enhanced) return getHttpResponse(StatusCode.BAD_REQUEST);
 
-    if (!isReadOnlyFormData(body)) return getHttpResponse(StatusCode.BAD_REQUEST);
+        flash(session, 'error', 'Une erreur est survenue, veuillez réessayer plus tard.');
+
+        return {
+            status: StatusCode.FOUND,
+            headers: {
+                location: '/creer-un-compte',
+            }
+        }
+    }
 
     const data = formDataToObject(body);
     const { username, name, password } = data;
     const { error } = await schema.validate(data, { abortEarly: false });
 
     if (error) {
+        if (enhanced) {
+            return {
+                status: StatusCode.BAD_REQUEST,
+                body: {
+                    errors: validationDetailsToError(error.details),
+                }
+            };
+        }
+
+        flash(session, 'error', validationDetailsToText(error.details));
+
         return {
-            status: StatusCode.BAD_REQUEST,
-            body: {
-                errors: validationDetailsToError(error.details),
+            status: StatusCode.FOUND,
+            headers: {
+                location: '/creer-un-compte',
             }
-        };
+        }
     }
 
     let user: User | undefined;
@@ -66,19 +89,38 @@ export async function post(req: ServerRequest): Promise<EndpointOutput> {
 
     // TODO (William): Better output as to why the request was bad
     if (!user) {
-        return getHttpResponse(StatusCode.BAD_REQUEST);
+        if (enhanced) return getHttpResponse(StatusCode.BAD_REQUEST);
+
+        flash(session, 'error', 'Une erreur est survenue. Veuillez réessayer plus tard');
+
+        return {
+            status: StatusCode.FOUND,
+            headers: {
+                location: '/creer-un-compte',
+            }
+        }
     }
 
-    // FIXME: Redirect doesn't get this.
-    // flash(req, { message: 'Compte créé avec succès', type: 'success' });
 
     delete user.password;
+    session.user = { ...user };
+
+    if (enhanced) {
+        return {
+            status: StatusCode.OK,
+            headers: {
+                'Content-type': 'application/json',
+            },
+            body: JSON.stringify(user),
+        }
+    }
+
+    flash(session, 'success', 'Votre compte a été créé. Vous êtes maintenant connecté.e.');
 
     return {
-        status: 303,
+        status: StatusCode.SEE_OTHER,
         headers: {
             location: '/',
-            'set-cookie': `user=${Buffer.from(JSON.stringify({ ...user })).toString()}; Path=/; HttpOnly; SameSite=strict`,
-        },
+        }
     }
 }

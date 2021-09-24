@@ -6,11 +6,10 @@ import cookie from 'cookie';
 import { v4 as uuid } from 'uuid';
 
 import { db } from '$database';
-import { isReadOnlyFormData } from '$utils/helpers/request';
+import { getSessionWithId, isReadOnlyFormData } from '$utils/helpers/request';
 
 export const handle: Handle = async ({ request, resolve }): Promise<ServerResponse> => {
-    const { userid, user = '{}' } = cookie.parse(request.headers.cookie || '');
-    const flashes = JSON.parse(request.headers['X-HEIN-FLASH'] || '[]');
+    const { session } = cookie.parse(request.headers.cookie || '');
 
     if (!db.isReady) {
         db.init();
@@ -22,27 +21,25 @@ export const handle: Handle = async ({ request, resolve }): Promise<ServerRespon
             || request.method;
     }
 
-    request.locals.userid = userid || uuid();
-    request.locals.flash = flashes || [];
-    request.locals.user = JSON.parse(Buffer.from(user).toString('utf-8'));
+    request.locals.sessionid = session || uuid();
+    request.locals.session = getSessionWithId(session);
 
     const response = await resolve(request);
 
-    if (!userid) {
-        response.headers['set-cookie'] = `userid=${request.locals.userid}; Path=/; HttpOnly; SameSite=strict`;
+    if (!session) {
+        response.headers['set-cookie'] = `session=${request.locals.sessionid}; Path=/; HttpOnly; SameSite=strict`;
     }
 
     return response;
 }
 
 export const getSession: GetSession = (request: ServerRequest): Session => {
-    const {
-        flash,
-        user,
-    } = request.locals;
+    const { session } = request.locals;
+
+    const flashes = session.flash.splice(0, session.flash.length);
 
     return {
-        flash,
-        user,
-    }
+        ...session,
+        flash: flashes,
+    };
 }

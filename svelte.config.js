@@ -26,6 +26,7 @@ const config = {
 			plugins: [rawSvg()],
 			resolve: {
 				alias: {
+					$stores: path.resolve('./src/stores'),
 					$utils: path.resolve('./src/utils'),
 					$database: path.resolve('./src/database'),
 				}

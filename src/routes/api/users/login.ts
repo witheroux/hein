@@ -1,10 +1,10 @@
-import type { EndpointOutput, ServerRequest } from '@sveltejs/kit/types/endpoint';
+import type { EndpointOutput } from '@sveltejs/kit/types/endpoint';
+import type { ServerRequest } from '@sveltejs/kit/types/hooks';
 
-import { Buffer } from 'buffer';
 import Joi from 'joi';
 import { User } from '$database';
 import { compare } from '$utils/helpers/password';
-import { formDataToObject, getHttpResponse, validationDetailsToError } from '$utils/helpers/request';
+import { flash, formDataToObject, getHttpResponse, isEnhanced, isReadOnlyFormData, validationDetailsToError, validationDetailsToText } from '$utils/helpers/request';
 import { StatusCode } from '$utils/constants/httpResponse';
 
 export const schema = Joi.object({
@@ -14,16 +14,43 @@ export const schema = Joi.object({
         .required(),
 });
 
-export async function post({ body }: ServerRequest): Promise<EndpointOutput> {
+export async function post({ body, headers, locals }: ServerRequest): Promise<EndpointOutput> {
+    const enhanced = isEnhanced(headers);
+    const { session } = locals;
+
+    if (!isReadOnlyFormData(body)) {
+        if (enhanced) return getHttpResponse(StatusCode.BAD_REQUEST);
+
+        flash(session, 'error', 'Une erreur est survenue, veuillez réessayer plus tard.');
+
+        return {
+            status: StatusCode.FOUND,
+            headers: {
+                location: '/connexion',
+            }
+        }
+    }
+
     const data = formDataToObject(body);
     const { username, password } = data;
     const { error } = schema.validate(data, { abortEarly: false });
 
     if (error) {
+        if (enhanced) {
+            return {
+                status: StatusCode.BAD_REQUEST,
+                body: {
+                    errors: validationDetailsToError(error.details),
+                }
+            }
+        }
+
+        flash(session, 'error', validationDetailsToText(error.details));
+
         return {
-            status: 400,
-            body: {
-                errors: validationDetailsToError(error.details),
+            status: StatusCode.FOUND,
+            headers: {
+                location: '/connexion',
             }
         }
     }
@@ -40,20 +67,50 @@ export async function post({ body }: ServerRequest): Promise<EndpointOutput> {
     }
 
     if (!user) {
-        return getHttpResponse(StatusCode.NOT_FOUND);
+        if (enhanced) return getHttpResponse(StatusCode.UNAUTHORIZED);
+
+        flash(session, 'error', 'Mot de passe/courriel invalide');
+
+        return {
+            status: StatusCode.FOUND,
+            headers: {
+                location: '/connexion',
+            }
+        }
     }
 
     if (!await compare(password, user?.password)) {
-        return getHttpResponse(StatusCode.UNAUTHORIZED);
+        if (enhanced) return getHttpResponse(StatusCode.UNAUTHORIZED);
+        
+        flash(session, 'error', 'Mot de passe/courriel invalide');
+        
+        return {
+            status: StatusCode.FOUND,
+            headers: {
+                location: '/connexion',
+            }
+        }
     }
 
     delete user.password;
+    session.user = { ...user };
+
+    if (enhanced) {
+        return {
+            status: StatusCode.OK,
+            headers: {
+                'Content-type': 'application/json',
+            },
+            body: JSON.stringify(user),
+        }
+    }
+
+    flash(session, 'success', 'Vous êtes maintenant connecté.e.');
 
     return {
-        status: 303,
+        status: StatusCode.SEE_OTHER,
         headers: {
             location: '/',
-            'set-cookie': `user=${Buffer.from(JSON.stringify({...user})).toString()}; Path=/; HttpOnly; SameSite=strict`,
         }
     }
 }

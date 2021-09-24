@@ -1,14 +1,15 @@
 import type Joi from "joi";
 import type { EndpointOutput } from "@sveltejs/kit/types/endpoint";
-import type { ServerRequest } from "@sveltejs/kit/types/hooks";
-import type { JSONValue, ReadOnlyFormData } from "@sveltejs/kit/types/helper";
-import type { Flash } from "$utils/types/request";
+import type { JSONValue, ReadOnlyFormData, RequestHeaders } from "@sveltejs/kit/types/helper";
+import type { Flash, Session } from "$utils/types/request";
 
 import { MESSAGES, StatusCode } from "$utils/constants/httpResponse";
 
-export function flash(req: ServerRequest, flashObject: Flash): void {
-    req.locals.flash = req.locals.flash || [];
-    req.locals.flash.push(flashObject);
+const sessions = new Map<string, Session>();
+
+export function flash(session: Session, type: Flash['type'], message: string): void {
+    session.flash = session.flash || [];
+    session.flash.push({ type, message });
 }
 
 export function formDataToObject<T extends Record<string, string> = Record<string, any>>(query: URLSearchParams): T;
@@ -50,9 +51,35 @@ export function validationDetailsToError(details: Joi.ValidationErrorItem[]): JS
     return errorObject;
 }
 
+export function validationDetailsToText(details: Joi.ValidationErrorItem[]): string {
+    // TODO (William): Actually detail errors in a readable form.
+    return 'Here are the errors: TODO';
+}
+
 export function isReadOnlyFormData(body: string | Uint8Array | ReadOnlyFormData): body is ReadOnlyFormData {
     const isString = typeof body === 'string';
     const isUint8Array = body instanceof Uint8Array;
 
     return !isString && !isUint8Array;
+}
+
+export function isEnhanced(headers: RequestHeaders) {
+    return headers.accept === 'application/json';
+}
+
+function getDefaultSession(): Session {
+    return {
+        flash: [],
+    };
+}
+
+export function getSessionWithId(id: string): Session {
+    let session = sessions.get(id);
+
+    if (!session) {
+        session = getDefaultSession();
+        sessions.set(id, session);
+    }
+
+    return session;
 }

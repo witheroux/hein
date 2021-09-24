@@ -1,10 +1,16 @@
 <script lang="ts">
-    import { TITLE_SEPARATOR, TITLE_SUFFIX } from "$utils/constants/labels";
+  import { onDestroy } from "svelte";
+  import { get } from "svelte/store";
+  
+  import { TITLE_SEPARATOR, TITLE_SUFFIX } from "$utils/constants/labels";
 
-    import Block from '$lib/Block/index.svelte';
-    import Button from '$lib/Button/index.svelte';
-    import Input from '$lib/Input/index.svelte';
-    import Link from '$lib/Link/index.svelte';
+  import Block from '$lib/Block/index.svelte';
+  import Button from '$lib/Button/index.svelte';
+  import Input from '$lib/Input/index.svelte';
+  import Link from '$lib/Link/index.svelte';
+  import { flashes } from "$stores/flash";
+
+  const flash = get(flashes);
 </script>
 
 <svelte:head>
@@ -38,7 +44,7 @@
     <Button type="submit" isSmall>Me connecter</Button>
     <Link className="mt-2" href="/mot-de-passe-oublie">Mot de passe oublié?</Link>
   </form>
-  
+
   <svelte:fragment slot="bottom">
     <p class="text-center">
       Pas de compte? 
