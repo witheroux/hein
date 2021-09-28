@@ -83,3 +83,7 @@ export function getSessionWithId(id: string): Session {
 
     return session;
 }
+
+export function saveSession(id: string, session: Session): void {
+    sessions.set(id, session);
+}

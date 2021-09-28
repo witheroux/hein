@@ -4,7 +4,7 @@
   import type { Flash, Session } from '$utils/types/request';
 
   export async function load({ session }: LoadInput<Rec<string>, Rec<string>, Session>): Promise<LoadOutput> {
-    const { user, flash } = session;
+    const { user, flash, csrf } = session;
     const { name, uuid, id } = user || {};
 
     return {
@@ -14,6 +14,7 @@
         uuid,
         id,
         flash,
+        csrf,
       }
     };
   }
@@ -26,7 +27,7 @@
   import FlashManager from '$lib/FlashManager/index.svelte';
   // import WindowManager from '$lib/WindowManager/index.svelte';
 
-  import { USER_CONTEXT_KEY } from '$utils/constants/contexts';
+  import { USER_CONTEXT_KEY, CSRF_CONTEXT_KEY } from '$utils/constants/contexts';
 
   import '../app.css';
 
@@ -35,8 +36,10 @@
   export let uuid: string;
   export let id: string;
   export let flash: Flash[];
+  export let csrf: string;
 
   setContext(USER_CONTEXT_KEY, { logged, name, uuid, id });
+  setContext(CSRF_CONTEXT_KEY, csrf);
 </script>
 
 <FlashManager {flash}>

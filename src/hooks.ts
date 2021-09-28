@@ -21,6 +21,7 @@ export const handle: Handle = async ({ request, resolve }): Promise<ServerRespon
             || request.method;
     }
 
+    // Get the current session for the user
     request.locals.sessionid = session || uuid();
     request.locals.session = getSessionWithId(session);
 
@@ -30,16 +31,19 @@ export const handle: Handle = async ({ request, resolve }): Promise<ServerRespon
         response.headers['set-cookie'] = `session=${request.locals.sessionid}; Path=/; HttpOnly; SameSite=strict`;
     }
 
+    // Generate a new CSRF token for the next request
+    request.locals.session.csrf = uuid();
+
     return response;
 }
 
 export const getSession: GetSession = (request: ServerRequest): Session => {
     const { session } = request.locals;
 
-    const flashes = session.flash.splice(0, session.flash.length);
+    const flash = session.flash.splice(0, session.flash.length);
 
     return {
         ...session,
-        flash: flashes,
+        flash,
     };
 }

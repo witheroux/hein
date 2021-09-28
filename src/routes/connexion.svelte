@@ -1,12 +1,15 @@
 <script lang="ts">
+  import { getContext } from "svelte";
   import { TITLE_SEPARATOR, TITLE_SUFFIX } from "$utils/constants/labels";
+  import { CSRF_CONTEXT_KEY } from "$utils/constants/contexts";
+  import { checkValidity } from "$utils/actions/form";
 
   import Block from '$lib/Block/index.svelte';
   import Button from '$lib/Button/index.svelte';
   import Input from '$lib/Input/index.svelte';
   import Link from '$lib/Link/index.svelte';
 
-  import { checkValidity } from "$utils/actions/form";
+  const csrf: string = getContext(CSRF_CONTEXT_KEY);
 </script>
 
 <svelte:head>
@@ -27,6 +30,8 @@
     class="flex flex-col"
     use:checkValidity
   >
+    <input type="hidden" name="csrf" value={csrf} />
+
     <Input 
       name="username" 
       label="Utilisateur"

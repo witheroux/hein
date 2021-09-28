@@ -1,6 +1,5 @@
 <script lang="ts">
-import { onDestroy, onMount } from "svelte";
-
+  import { onDestroy, onMount } from "svelte";
 
   export let label: string;
   export let name: string;
@@ -9,12 +8,17 @@ import { onDestroy, onMount } from "svelte";
   export let value: string = "";
   export let checked: boolean = false;
   export let placeholder: string = undefined;
+  export let hint: string = "";
   export let type: string = "text";
+  
   export let minlength: number = undefined;
   export let maxlength: number = undefined;
+
   export let pattern: string = undefined;
   export let patternErrorMessage: string = "";
-  export let hint: string = "";
+
+  export let match: string = undefined;
+  export let matchErrorMessage: string = "";
   
   let errors: string[] = [];
   let input: HTMLInputElement;
@@ -25,8 +29,9 @@ import { onDestroy, onMount } from "svelte";
 
   const validate = (e: InputEvent) => {
     errors = [];
+    input.setCustomValidity('');
 
-    if (input.validity.valid) return;
+    if (input.validity.valid && !match) return;
 
     e.preventDefault();
 
@@ -44,6 +49,18 @@ import { onDestroy, onMount } from "svelte";
 
     if (input.validity.badInput || input.validity.patternMismatch || input.validity.typeMismatch) {
       errors.push(patternErrorMessage || 'Champs invalide.');
+    }
+
+    if (match) {
+      const inputToMatch = input.form.querySelector<HTMLInputElement>(`[name="${match}"]`);
+      if (inputToMatch.value !== input.value) {
+        errors.push(matchErrorMessage || 'Le champs ne correspond pas.');
+      }
+    }
+
+    if (errors.length) {
+      // Important to trigger :invalid on custom errors like match
+      input.setCustomValidity(errors[0]);
     }
   };
 
