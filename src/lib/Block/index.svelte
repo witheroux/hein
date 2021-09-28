@@ -1,5 +1,4 @@
 <script lang="ts">
-
 </script>
 
 <article class="bg-gray-100 rounded-lg shadow-md text-center">

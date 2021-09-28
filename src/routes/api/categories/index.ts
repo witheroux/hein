@@ -4,7 +4,7 @@ import type { ServerRequest } from "@sveltejs/kit/types/hooks";
 import Joi from "joi";
 
 import { StatusCode } from "$utils/constants/httpResponse";
-import { formDataToObject, getHttpResponse, isReadOnlyFormData, validationDetailsToError } from "$utils/helpers/request";
+import { formDataToObject, getHttpResponse, isReadOnlyFormData, validationDetailsToError, validationDetailsToText } from "$utils/helpers/request";
 import { Category } from "$database";
 import type { JSONValue } from "@sveltejs/kit/types/helper";
 
@@ -47,11 +47,12 @@ export async function get({ query }: ServerRequest): Promise<EndpointOutput> {
     } catch (e) {
         // TODO (William): Log error somewhere
         console.error(e);
+        
         return getHttpResponse(StatusCode.INTERNAL_SERVER_ERROR);
     }
 
     return {
-        status: 200,
+        status: StatusCode.OK,
         body: {
             categories: categories as unknown as JSONValue,
         }

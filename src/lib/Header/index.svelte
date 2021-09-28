@@ -8,8 +8,6 @@
   import MenuButton from '$lib/MenuButton/index.svelte';
   import Footer from '$lib/Footer/index.svelte';
 
-  export let className;
-
   let toggled = false;
   let width = 1280;
   let isMobile = false;
@@ -20,7 +18,7 @@
 <svelte:window bind:innerWidth={width} />
 
 <header
-  class="flex flex-col align-start w-full tablet:bg-none shadow-none tablet:shadow-xl {className}"
+  class="flex flex-col align-start w-full tablet:bg-none shadow-none tablet:shadow-xl"
 >
   <div
     class="w-full h-full tablet:h-auto text-center flex items-center sticky top-0 z-10 px-8 flex-shrink-0 duration-75"
@@ -28,11 +26,12 @@
     class:bg-gray-700={toggled && isMobile}
     class:transition={toggled && isMobile}
   >
-    <MenuButton
-      {toggled}
-      on:click={() => (toggled = !toggled)}
-      className="flex-shrink-0 relative z-10"
-    />
+    <span class="flex-shrink-0 relative z-10">
+      <MenuButton
+        {toggled}
+        on:click={() => (toggled = !toggled)}
+      />
+    </span>
     <a
       href="/"
       class="fixed left-1/2 transform -translate-x-1/2 tablet:transform-none tablet:static"

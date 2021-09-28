@@ -1,1 +1,1 @@
-export const PG_URL = import.meta.env.VITE_PG_URL;
+export const PG_URL = import.meta.env.VITE_PG_URL as string;

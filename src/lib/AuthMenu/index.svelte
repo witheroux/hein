@@ -11,7 +11,9 @@
     <span class="mr-1">Pas <strong>{name}</strong>?</span>
     <Link href="/api/users/logout">Se déconnecter</Link>
   {:else}
-    <Link className="mr-1" href="/connexion">Connexion</Link>
+    <span class="mr-1">
+      <Link href="/connexion">Connexion</Link>
+    </span>
     <Link href="/creer-un-compte">Créer un compte</Link>
   {/if}
 </div>

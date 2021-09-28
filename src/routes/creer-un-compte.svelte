@@ -56,8 +56,8 @@
 
   <svelte:fragment slot="bottom">
     <p class="text-center">
-      Déjà un compte? 
-      <Link className="ml-1" href="/connexion">Me connecter</Link>
+      <span class="mr-1">Déjà un compte?</span>
+      <Link href="/connexion">Me connecter</Link>
     </p>
   </svelte:fragment>
 </Block>

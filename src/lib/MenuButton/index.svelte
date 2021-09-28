@@ -1,9 +1,8 @@
 <script lang="ts">
   export let toggled = false;
-  export let className = '';
 </script>
 
-<button on:click type="button" class="mr-8 flex items-center tablet:hidden {className}">
+<button on:click type="button" class="mr-8 flex items-center tablet:hidden">
   <span class="text-gray-100" class:toggled />
   <span class="sr-only">
     {toggled ? 'Fermer le menu' : 'Ouvrir le menu'}

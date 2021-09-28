@@ -1,8 +1,15 @@
 module.exports = {
 	mode: "jit",
-	purge: [
-		"./src/**/*.{html,js,svelte,ts}",
-	],
+	purge: {
+		content: [
+			"./src/**/*.{html,js,svelte,ts}",
+		],
+		transform: {
+			'svelte': (content, ...args) => {
+				return content.replace(/\$?\{.*?\?\s+("|')(.*?)("|')\s+:\s+("|')(.*?)("|').*?\}/g, '$2 $5');
+			}
+		},
+	},
 	theme: {
 		screens: {
 			'tablet': '640px',
@@ -20,6 +27,7 @@ module.exports = {
 				100: '#F5F5F5',
 				200: '#C4C4C4',
 				300: '#D1CCC6',
+				500: '#888888',
 				700: '#2D2A28',
 			},
 			orange: {
@@ -37,6 +45,10 @@ module.exports = {
 			}
 		},
 		extend: {
+			maxWidth: {
+				'3/4': '75%',
+			},
+
 			minHeight: {
 				16: '4rem',
 			},

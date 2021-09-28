@@ -1,41 +1,52 @@
 import type { ServerRequest, ServerResponse } from "@sveltejs/kit/types/hooks";
 
 import { Card } from "$database";
+import { isEnhanced } from "$utils/helpers/request";
+import { StatusCode } from "$utils/constants/httpResponse";
 
-// TODO (William): Might be better off in a Key-value store
-const cardsMap = new Map<string, Set<number>>();
-
-export async function get(req: ServerRequest): Promise<ServerResponse> {
+export async function get({ headers, locals }: ServerRequest): Promise<ServerResponse> {
+    const enhanced = isEnhanced(headers);
+    const { session } = locals;
+    let { cards } = session;
+    
     // Count always returns an array where the first object only contains a count attribute
     const cardCountResult = await Card.query()
         .count() as unknown;
 
     const cardCount = cardCountResult[0].count;
 
-    const { sessionid } = req.locals;
-
-    let cardIds = cardsMap.get(sessionid);
-
-    if (!cardIds || cardIds.size >= cardCount) {
-        cardIds = new Set<number>();
+    if (!cards || cards.size >= cardCount) {
+        cards = new Set<number>();
     }
 
-    const row = Math.floor(Math.random() * (cardCount - cardIds.size));
+    const row = Math.floor(Math.random() * (cardCount - cards.size));
 
     const card = await Card.query()
         .withGraphFetched('category')
-        .whereNotIn('id', Array.from(cardIds))
+        .whereNotIn('id', Array.from(cards))
         .orderBy('id')
         .limit(1)
         .offset(row)
         .first();
 
-    cardIds.add(card.id);
+    cards.add(card.id);
 
-    cardsMap.set(sessionid, cardIds);
+    session.cards = cards;
+
+    if (enhanced) {
+        return {
+            status: StatusCode.OK,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ...card
+            }),
+        }
+    }
     
     return {
-        status: 303,
+        status: StatusCode.SEE_OTHER,
         headers: {
             location: `/jouer/${card.slug}`
         }

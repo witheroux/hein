@@ -9,8 +9,10 @@ import { StatusCode } from '$utils/constants/httpResponse';
 
 export const schema = Joi.object({
     username: Joi.string()
+        .min(3)
         .required(),
     password: Joi.string()
+        .min(8)
         .required(),
 });
 

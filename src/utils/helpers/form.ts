@@ -1,15 +1,47 @@
 interface EnhanceOptions {
+  error?: (res: Response | Error, form: HTMLFormElement) => void;
   pending?: (data: FormData, form: HTMLFormElement) => void;
-  error?: (resOrError: Response | Error, form: HTMLFormElement) => void;
   result: (res: Response, form: HTMLFormElement) => void;
+  validate?: boolean;
 }
 
-export function enhance(form: HTMLFormElement, { pending, error, result }: EnhanceOptions) {
-  async function submitForm(e: SubmitEvent) {
+export function checkValidity(form: HTMLFormElement) {
+  async function checkOnSubmit(e: SubmitEvent): Promise<void> {
+    console.log('checking');
+    const invalidInput: HTMLElement = form.querySelector(':invalid');
+    console.log(invalidInput);
+    if (!form.checkValidity()) {
+      e.preventDefault();
+      invalidInput.focus();
+      return;
+    }
+  }
+
+  console.log(form);
+
+  form.addEventListener('submit', checkOnSubmit);
+
+  return {
+    destroy() {
+      form.removeEventListener('submit', checkOnSubmit);
+    }
+  }
+}
+
+export function enhance(form: HTMLFormElement, { error, pending, result, validate }: EnhanceOptions) {
+  async function submitForm(e: SubmitEvent): Promise<void> {
+    e.preventDefault();
+
     const body = new FormData(form);
 
     if (pending) {
       pending(body, form);
+    }
+
+    if (validate && !form.checkValidity()) {
+      const invalidInput: HTMLElement = form.querySelector(':invalid');
+      invalidInput.focus();
+      return;
     }
 
     try {
