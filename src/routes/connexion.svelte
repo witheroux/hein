@@ -6,7 +6,7 @@
   import Input from '$lib/Input/index.svelte';
   import Link from '$lib/Link/index.svelte';
 
-  import { checkValidity } from "$utils/helpers/form";
+  import { checkValidity } from "$utils/actions/form";
 </script>
 
 <svelte:head>

@@ -7,23 +7,19 @@ interface EnhanceOptions {
 
 export function checkValidity(form: HTMLFormElement) {
   async function checkOnSubmit(e: SubmitEvent): Promise<void> {
-    console.log('checking');
-    const invalidInput: HTMLElement = form.querySelector(':invalid');
-    console.log(invalidInput);
     if (!form.checkValidity()) {
       e.preventDefault();
-      invalidInput.focus();
-      return;
+      form.querySelectorAll<HTMLElement>(':invalid')[0]?.focus();
     }
   }
 
-  console.log(form);
+  form.noValidate = true;
 
-  form.addEventListener('submit', checkOnSubmit);
+  form.addEventListener('submit', checkOnSubmit, true);
 
   return {
     destroy() {
-      form.removeEventListener('submit', checkOnSubmit);
+      form.removeEventListener('submit', checkOnSubmit, true);
     }
   }
 }
@@ -39,8 +35,7 @@ export function enhance(form: HTMLFormElement, { error, pending, result, validat
     }
 
     if (validate && !form.checkValidity()) {
-      const invalidInput: HTMLElement = form.querySelector(':invalid');
-      invalidInput.focus();
+      form.querySelectorAll<HTMLElement>(':invalid')[0]?.focus();
       return;
     }
 
@@ -67,6 +62,10 @@ export function enhance(form: HTMLFormElement, { error, pending, result, validat
         throw e;
       }
     }
+  }
+
+  if (validate) {
+    form.noValidate = true;
   }
 
   form.addEventListener('submit', submitForm);

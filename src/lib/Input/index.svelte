@@ -24,11 +24,11 @@ import { onDestroy, onMount } from "svelte";
     : "border-color-gray-200";
 
   const validate = (e: InputEvent) => {
-    e.preventDefault();
-
     errors = [];
 
     if (input.validity.valid) return;
+
+    e.preventDefault();
 
     if (input.validity.valueMissing) {
       errors.push('Ce champs est requis.');
@@ -45,8 +45,6 @@ import { onDestroy, onMount } from "svelte";
     if (input.validity.badInput || input.validity.patternMismatch || input.validity.typeMismatch) {
       errors.push(patternErrorMessage || 'Champs invalide.');
     }
-
-    input.setCustomValidity(errors[0]);
   };
 
   onMount(() => {
@@ -64,7 +62,7 @@ import { onDestroy, onMount } from "svelte";
   });
 </script>
 
-<label for={id} class="flex flex-col items-start w-full mb-5">
+<label for={id} class="flex flex-col items-start w-full mb-6">
   <span class="text-sm mb-1.5 font-semibold">{label}</span>
   <input 
     bind:this={input}
@@ -85,6 +83,6 @@ import { onDestroy, onMount } from "svelte";
     <span class="text-xs text-gray-500 mt-1">{hint}</span>
   {/if}
   {#if errors.length}
-    <span class="text-xs text-red-500">{errors[0]}</span>
+    <span class="-mb-4 text-xs text-red-500">{errors[0]}</span>
   {/if}
 </label>
