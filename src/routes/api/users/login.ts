@@ -35,7 +35,7 @@ export async function post({ body, headers, locals }: ServerRequest): Promise<En
 
     const data = formDataToObject(body);
     const { username, password } = data;
-    const { error } = schema.validate(data, { abortEarly: false });
+    const { error } = schema.validate(data, { abortEarly: false, allowUnknown: true, });
 
     if (error) {
         if (enhanced) {

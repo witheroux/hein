@@ -21,11 +21,11 @@ export const schema = Joi.object({
         .required(),
     password: Joi.string()
         .min(8)
-        .max(64)
+        .max(128)
         .required(),
-    confirmPassword: Joi.ref('password')
+    "confirm-password": Joi.ref('password')
 })
-    .with('password', 'confirmPassword');
+    .with('password', 'confirm-password');
 
 export async function post({ body, locals, headers }: ServerRequest): Promise<EndpointOutput> {
     const { session } = locals;
@@ -46,7 +46,7 @@ export async function post({ body, locals, headers }: ServerRequest): Promise<En
 
     const data = formDataToObject(body);
     const { username, name, password } = data;
-    const { error } = await schema.validate(data, { abortEarly: false });
+    const { error } = await schema.validate(data, { abortEarly: false, allowUnknown: true, });
 
     if (error) {
         if (enhanced) {
@@ -59,6 +59,8 @@ export async function post({ body, locals, headers }: ServerRequest): Promise<En
         }
 
         flash(session, 'error', validationDetailsToText(error.details));
+
+        console.log(error);
 
         return {
             status: StatusCode.FOUND,

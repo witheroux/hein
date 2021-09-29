@@ -40,6 +40,7 @@
       placeholder="coolguy123"
       required
       minlength={3}
+      maxlength={24}
       pattern="[A-Za-z0-9\-_]+"
       patternErrorMessage="Le champs peut seulement contenir des lettres de a à z, des chiffres des tirets(-) et des barres de soulignement(_)."
       hint="Minimum de 3 caractères. A-Z, 0-9, - et _."
@@ -51,10 +52,11 @@
       id="name"
       placeholder="Cool Guy"
       required
-      minlength={3}
+      minlength={2}
+      maxlength={50}
       pattern={"^\\p{L}(\\p{L}| (?! |-)|-(?! |-))+"}
       patternErrorMessage="Le champs doit commencé par une lettre. Plusiers espaces et/ou tirets ne peuvent pas se suivre."
-      hint="Minimum de 3 caractères. Lettres, espaces et tirets."
+      hint="Minimum de 2 caractères. Lettres, espaces et tirets."
     />
 
     <Input
@@ -65,6 +67,7 @@
       placeholder="●●●●●●●●●●●"
       required
       minlength={8}
+      maxlength={128}
       hint="Minimum de 8 caractères."
     />
 
