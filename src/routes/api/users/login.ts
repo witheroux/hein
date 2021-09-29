@@ -34,7 +34,21 @@ export async function post({ body, headers, locals }: ServerRequest): Promise<En
     }
 
     const data = formDataToObject(body);
-    const { username, password } = data;
+    const { username, password, csrf } = data;
+
+    if (csrf !== session.csrf) {
+        if (enhanced) return getHttpResponse(StatusCode.BAD_REQUEST);
+
+        flash(session, 'error', 'Une erreur est survenue, veuillez réessayer plus tard.');
+
+        return {
+            status: StatusCode.FOUND,
+            headers: {
+                location: '/connexion',
+            }
+        }
+    }
+
     const { error } = schema.validate(data, { abortEarly: false, allowUnknown: true, });
 
     if (error) {

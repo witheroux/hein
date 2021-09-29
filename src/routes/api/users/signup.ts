@@ -45,7 +45,21 @@ export async function post({ body, locals, headers }: ServerRequest): Promise<En
     }
 
     const data = formDataToObject(body);
-    const { username, name, password } = data;
+    const { username, name, password, csrf } = data;
+
+    if (csrf !== session.csrf) {
+        if (enhanced) return getHttpResponse(StatusCode.BAD_REQUEST);
+
+        flash(session, 'error', 'Une erreur est survenue, veuillez réessayer plus tard.');
+
+        return {
+            status: StatusCode.FOUND,
+            headers: {
+                location: '/creer-un-compte',
+            }
+        }
+    }
+
     const { error } = await schema.validate(data, { abortEarly: false, allowUnknown: true, });
 
     if (error) {
