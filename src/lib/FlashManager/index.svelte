@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { Flash } from '$utils/types/request';
+
+  import FlashMessage from './Flash/index.svelte';
   
   import { flashes } from '$stores/flash';
 
@@ -17,7 +19,10 @@
 
 <div>
   {#each flash as f}
-    <div>{f.message}</div>
+    <FlashMessage
+      type={f.type}
+      message={f.message}
+    />
   {/each}
   <slot/>
 </div>
