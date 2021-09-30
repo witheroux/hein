@@ -4,7 +4,7 @@
   export async function load({ fetch, page }: LoadInput) {
     const { params } = page;
     const { slug } = params;
-    const res: Response = await fetch(`/api/categories?slug=${slug}`);
+    const res: Response = await fetch(`/api/categories/${slug}`);
 
     if (res.ok) {
       const { categories } = await res.json();
@@ -13,7 +13,7 @@
       if (!category) {
         return {
           status: 404,
-          error: 'Cette catégorie ne semble pas exister'
+          error: 'Cette catégorie ne semble pas exister.'
         };
       }
 

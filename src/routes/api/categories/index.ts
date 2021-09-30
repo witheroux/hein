@@ -8,39 +8,14 @@ import { flash, formDataToObject, getHttpResponse, isEnhanced, isReadOnlyFormDat
 import { Category } from "$database";
 import type { JSONValue } from "@sveltejs/kit/types/helper";
 
-const getSchema = Joi.object({
-    slug: Joi.string()
-        .min(3)
-        .max(128)
-        .optional()
-});
-
-export async function get({ query }: ServerRequest): Promise<EndpointOutput> {
-    const data = formDataToObject(query);
-    const { slug } = data;
-
-    const { error } = getSchema.validate(query, { allowUnknown: true });
-
-    if (error) {
-        return {
-            status: StatusCode.BAD_REQUEST,
-            body: {
-                errors: validationDetailsToError(error.details)
-            }
-        }
-    }
-
-    let categoriesQuery = Category.query()
+export async function get(): Promise<EndpointOutput> {
+    const categoriesQuery = Category.query()
         .select()
         .orderBy('name')
         .withGraphFetched('created_by')
         .modifyGraph('created_by', (builder) => builder.select('id', 'uuid', 'name', 'username'));
 
     let categories: Category[] = [];
-
-    if (slug) {
-        categoriesQuery = categoriesQuery.where({ slug });
-    }
 
     try {
         categories = await categoriesQuery;
