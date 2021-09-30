@@ -74,8 +74,6 @@ export async function post({ body, locals, headers }: ServerRequest): Promise<En
 
         flash(session, 'error', validationDetailsToText(error.details));
 
-        console.log(error);
-
         return {
             status: StatusCode.FOUND,
             headers: {

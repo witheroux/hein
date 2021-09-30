@@ -42,6 +42,10 @@
   setContext(CSRF_CONTEXT_KEY, csrf);
 </script>
 
+<svelte:head>
+  <meta name="theme-color" content="#AC4094" />
+</svelte:head>
+
 <FlashManager {flash}>
   <!-- <WindowManager/> -->
   <div
