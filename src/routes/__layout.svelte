@@ -56,11 +56,9 @@
     </div>
   
     <main
-      class="overflow-y-auto tablet:flex items-center justify-center pt-32 tablet:p-4 h-full tablet:h-auto tablet:bg-gray-700 tablet:bg-opacity-50"
+      class="overflow-y-auto tablet:grid items-center pt-32 tablet:p-4 h-full tablet:h-auto tablet:bg-gray-700 tablet:bg-opacity-50"
     >
-      <div class="m-auto">
-        <slot />
-      </div>
+      <slot />
     </main>
   </div>
 </FlashManager>

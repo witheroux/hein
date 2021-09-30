@@ -100,6 +100,6 @@
     <span class="text-xs text-gray-500 mt-1">{hint}</span>
   {/if}
   {#if errors.length}
-    <span class="-mb-4 text-xs text-red-500">{errors[0]}</span>
+    <span class="-mb-4 text-xs text-red-500 text-left">{errors[0]}</span>
   {/if}
 </label>
