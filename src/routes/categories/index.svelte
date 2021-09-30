@@ -73,7 +73,7 @@
     {/if}
   </div>
   <div class="flex items-center mt-8">
-    <span class="text-gray-100 mr-2 text-semibold">Classer par :</span>
+    <span class="text-gray-100 mr-2 text-semibold">Classer par&nbsp;:</span>
     {#each SORT_OPTIONS as [type, name]}
       <span class="w-14 mr-2 text-center">
         <Link 

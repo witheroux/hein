@@ -13,6 +13,9 @@
   let isMobile = false;
 
   $: isMobile = width < 640;
+
+  const toggleMenu = () => toggled = !toggled;
+  const closeMenu = () => toggled = false;
 </script>
 
 <svelte:window bind:innerWidth={width} />
@@ -29,7 +32,7 @@
     <span class="flex-shrink-0 relative z-10">
       <MenuButton
         {toggled}
-        on:click={() => (toggled = !toggled)}
+        on:click={toggleMenu}
       />
     </span>
     <a
@@ -50,8 +53,8 @@
       }}
       class="flex flex-col fixed bg-gray-700 tablet:bg-transparent tablet:static pt-40 p-8 tablet:pt-8 left-0 top-0 bottom-0 w-full tablet:w-auto h-full justify-between overflow-y-auto"
     >
-      <Menu />
-      <Footer />
+      <Menu onClickLink={closeMenu} />
+      <Footer onClickLink={closeMenu} />
     </nav>
   {/if}
 </header>

@@ -51,7 +51,7 @@
   <div
     class="bg-gradient-to-b from-purple-300 via-purple-700 to-purple-700 h-screen tablet:grid tablet:grid-cols-game overflow-hidden "
   >
-    <div class="flex fixed tablet:static overflow-y-auto">
+    <div class="flex fixed tablet:static overflow-y-auto z-10 w-full">
       <Header />
     </div>
   

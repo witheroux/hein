@@ -22,7 +22,9 @@
     height: 4px;
     position: relative;
     transform-origin: center;
-    transition: transform 0.2s ease-in-out;
+    transition-property: transform;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in-out;
     width: 100%;
   }
 
@@ -33,7 +35,8 @@
     height: 4px;
     width: 16px;
     background-color: inherit;
-    transition: inherit;
+    transition-duration: inherit;
+    transition-timing-function: inherit;
     border-radius: inherit;
   }
 
@@ -42,6 +45,11 @@
     bottom: 8px;
     position: absolute;
     transform-origin: 12px 0px;
+    transition-property: transform bottom;
+  }
+
+  button:hover span:not(.sr-only):not(.toggled):before {
+    bottom: 10px;
   }
 
   span:after {
@@ -49,6 +57,11 @@
     right: 0;
     top: 8px;
     transform-origin: 6px -2px;
+    transition-property: transform top;
+  }
+
+  button:hover span:not(.sr-only):not(.toggled):after {
+    top: 10px;
   }
 
   .toggled {

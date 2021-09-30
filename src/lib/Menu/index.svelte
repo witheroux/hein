@@ -4,16 +4,18 @@
   import cardsIcon from '$lib/icons/poker.svg';
 
   import MenuItem from '$lib/MenuItem/index.svelte';
+
+  export let onClickLink: () => void;
 </script>
 
 <div class="flex flex-col space-y-5 mb-12">
-  <MenuItem href="/api/play" icon={playIcon}>
+  <MenuItem href="/api/play" icon={playIcon} on:click={onClickLink}>
     <svelte:fragment slot="text">Jouer</svelte:fragment>
   </MenuItem>
-  <MenuItem href="/categories" icon={categoriesIcon}>
+  <MenuItem href="/categories" icon={categoriesIcon} on:click={onClickLink}>
     <svelte:fragment slot="text">Catégories</svelte:fragment>
   </MenuItem>
-  <MenuItem href="/cartes" icon={cardsIcon}>
+  <MenuItem href="/cartes" icon={cardsIcon} on:click={onClickLink}>
     <svelte:fragment slot="text">Cartes</svelte:fragment>
   </MenuItem>
 </div>
