@@ -11,7 +11,7 @@
 </script>
 
 <button
-  class="font-title bg-gradient-to-b from-orange-300 to-orange-600 text-orange-50 border-radius {padding} rounded-full {fontSize} {width} shadow-md"
+  class="font-title bg-gradient-to-b from-orange-300 to-orange-600 text-orange-50 {padding} rounded-full {fontSize} {width} shadow-md"
   {type}
   on:click
 >

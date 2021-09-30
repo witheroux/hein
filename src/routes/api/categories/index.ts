@@ -8,11 +8,26 @@ import { flash, formDataToObject, getHttpResponse, isEnhanced, isReadOnlyFormDat
 import { Category } from "$database";
 import type { JSONValue } from "@sveltejs/kit/types/helper";
 
-export async function get(): Promise<EndpointOutput> {
+export async function get({ query }: ServerRequest): Promise<EndpointOutput> {
+    const data = formDataToObject(query);
+    const { sort = 'name', order = 'asc' } = data;
+
+    let sortColumn;
+
+    switch (sort) {
+        case 'author':
+            sortColumn = `created_by.name`;
+            break;
+        case 'name':
+        default:
+            sortColumn = 'name';
+            break;
+    }
+    
     const categoriesQuery = Category.query()
         .select()
-        .orderBy('name')
-        .withGraphFetched('created_by')
+        .orderBy(sortColumn, order)
+        .withGraphJoined('created_by')
         .modifyGraph('created_by', (builder) => builder.select('id', 'uuid', 'name', 'username'));
 
     let categories: Category[] = [];
